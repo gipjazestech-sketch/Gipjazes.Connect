@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Home,
   MessageCircle,
@@ -15,9 +15,11 @@ import {
   ShoppingBag,
   Menu,
   X,
-  ShieldCheck
+  ShieldCheck,
+  Send
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { io } from 'socket.io-client';
 import Auth from './components/Auth';
 
 const Navbar = ({ setActiveTab }) => (
@@ -279,57 +281,79 @@ const Events = ({ events, joinEvent }) => (
   </div>
 );
 
-const Chat = () => (
-  <div className="flex flex-col h-[calc(100vh-12rem)] glass-morphism overflow-hidden">
-    <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-[#3CB371]/20 flex items-center justify-center text-[#3CB371]">
-          <ShieldCheck size={24} />
-        </div>
-        <div>
-          <h3 className="text-sm font-bold">Secure Global Chat</h3>
-          <p className="text-[10px] text-[#3CB371] font-medium flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#3CB371] animate-pulse"></span> End-to-end encrypted
-          </p>
-        </div>
-      </div>
-      <button className="text-slate-400 hover:text-white"><Settings size={18} /></button>
-    </div>
+const Chat = ({ messages, sendMessage, currentUser }) => {
+  const [input, setInput] = useState('');
+  const scrollRef = useRef();
 
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      <div className="flex justify-center mb-4">
-        <span className="text-[10px] bg-slate-800 text-slate-500 px-3 py-1 rounded-full border border-slate-700">Today</span>
-      </div>
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-      {[
-        { from: 'Marco', text: 'Hey Felix! Have you seen the new marketplace items?', time: '10:24 AM' },
-        { from: 'You', text: 'Not yet! Checking them out now. The security on this app is insane.', time: '10:25 AM', self: true },
-        { from: 'Marco', text: 'Yeah, the E2E encryption is legit. 🔒', time: '10:26 AM' }
-      ].map((msg, i) => (
-        <div key={i} className={`flex ${msg.self ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.self ? 'bg-[#FF9900] text-white rounded-br-none' : 'glass-morphism rounded-bl-none'}`}>
-            {!msg.self && <p className="text-[10px] font-bold mb-1 text-[#3CB371] uppercase">{msg.from}</p>}
-            <p className="leading-relaxed">{msg.text}</p>
-            <p className={`text-[9px] mt-1 ${msg.self ? 'text-orange-100' : 'text-slate-500'}`}>{msg.time}</p>
+  const handleSend = () => {
+    if (input.trim()) {
+      sendMessage(input);
+      setInput('');
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-12rem)] glass-morphism overflow-hidden">
+      <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#3CB371]/20 flex items-center justify-center text-[#3CB371]">
+            <ShieldCheck size={24} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold">Secure Global Chat</h3>
+            <p className="text-[10px] text-[#3CB371] font-medium flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3CB371] animate-pulse"></span> End-to-end encrypted
+            </p>
           </div>
         </div>
-      ))}
-    </div>
+        <button className="text-slate-400 hover:text-white"><Settings size={18} /></button>
+      </div>
 
-    <div className="p-4 border-t border-slate-700/50 bg-slate-900/50">
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Secure message..."
-          className="w-full bg-slate-800/80 border border-slate-700 rounded-full py-3 px-5 pr-12 focus:outline-none focus:ring-1 focus:ring-[#3CB371] text-sm"
-        />
-        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#3CB371] p-2 rounded-full text-white shadow-lg shadow-green-500/20">
-          <MessageSquare size={16} />
-        </button>
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+        <div className="flex justify-center mb-4">
+          <span className="text-[10px] bg-slate-800 text-slate-500 px-3 py-1 rounded-full border border-slate-700">Today</span>
+        </div>
+
+        {messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.author === currentUser ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.author === currentUser ? 'bg-[#FF9900] text-white rounded-br-none' : 'glass-morphism rounded-bl-none'}`}>
+              {msg.author !== currentUser && <p className="text-[10px] font-bold mb-1 text-[#3CB371] uppercase">{msg.author}</p>}
+              <p className="leading-relaxed">{msg.message}</p>
+              <p className={`text-[9px] mt-1 ${msg.author === currentUser ? 'text-orange-100' : 'text-slate-500'}`}>{msg.time}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="p-4 border-t border-slate-700/50 bg-slate-900/50">
+        <form
+          className="relative"
+          onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+        >
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Secure message..."
+            className="w-full bg-slate-800/80 border border-slate-700 rounded-full py-3 px-5 pr-12 focus:outline-none focus:ring-1 focus:ring-[#3CB371] text-sm"
+          />
+          <button
+            type="submit"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#3CB371] p-2 rounded-full text-white shadow-lg shadow-green-500/20 hover:scale-105 active:scale-95 transition-all"
+          >
+            <Send size={16} />
+          </button>
+        </form>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Groups = ({ groups, joinGroup }) => (
   <div className="space-y-6">
@@ -629,6 +653,40 @@ function App() {
   const [products, setProducts] = useState([]);
   const [groups, setGroups] = useState([]);
   const [events, setEvents] = useState([]);
+  const [socket, setSocket] = useState(null);
+  const [messages, setMessages] = useState([
+    { author: 'Marco', message: 'Hey Felix! Have you seen the new marketplace items?', time: '10:24 AM' },
+    { author: 'Felix', message: 'Not yet! Checking them out now. The security on this app is insane.', time: '10:25 AM' },
+    { author: 'Marco', message: 'Yeah, the E2E encryption is legit. 🔒', time: '10:26 AM' }
+  ]);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:5000');
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      console.log('Connected to socket server');
+      newSocket.emit('join_room', 'global');
+    });
+
+    newSocket.on('receive_message', (data) => {
+      setMessages((prev) => [...prev, data]);
+    });
+
+    return () => newSocket.close();
+  }, []);
+
+  const sendMessage = (text) => {
+    if (socket && user) {
+      const messageData = {
+        room: 'global',
+        author: user.name,
+        message: text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      socket.emit('send_message', messageData);
+    }
+  };
 
   const addNotification = (type, message) => {
     const id = Date.now();
@@ -874,7 +932,7 @@ function App() {
         ) : activeTab === 'merchants' ? (
           <MerchantCenter />
         ) : activeTab === 'chat' ? (
-          <Chat />
+          <Chat messages={messages} sendMessage={sendMessage} currentUser={user?.name} />
         ) : activeTab === 'groups' ? (
           <Groups groups={groups} joinGroup={joinGroup} />
         ) : activeTab === 'events' ? (

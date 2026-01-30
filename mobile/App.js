@@ -1,38 +1,112 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Globe, Heart, MessageSquare, Bell } from 'lucide-react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { Globe, Heart, MessageSquare, Bell, ShoppingBag, Calendar, Plus, User } from 'lucide-react-native';
 
 export default function App() {
     const [posts, setPosts] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('feed');
 
     useEffect(() => {
-        fetchPosts();
+        fetchData();
     }, []);
 
-    const fetchPosts = async () => {
+    const fetchData = async () => {
+        setLoading(true);
         try {
-            // Using localhost for development (would need IP for real device)
-            const response = await fetch('http://localhost:5000/api/posts');
-            const data = await response.json();
-            setPosts(data);
-        } catch (error) {
-            console.error('Error fetching posts:', error);
-            // Fallback for demo if fetch fails
-            setPosts([
-                {
-                    _id: '1',
-                    userId: { name: 'Global Traveler' },
-                    content: 'Exploring the beautiful Alps today. The air is so fresh here! 🏔️✨',
-                    location: 'Switzerland',
-                    likes: [],
-                    comments: []
-                }
+            const [postsRes, productsRes, eventsRes] = await Promise.all([
+                fetch('http://localhost:5000/api/posts'),
+                fetch('http://localhost:5000/api/products'),
+                fetch('http://localhost:5000/api/events')
             ]);
+
+            const postsData = await postsRes.json();
+            const productsData = await productsRes.json();
+            const eventsData = await eventsRes.json();
+
+            setPosts(postsData);
+            setProducts(productsData);
+            setEvents(eventsData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // Fallbacks for demo
+            setPosts([{ _id: '1', userId: { name: 'Global Traveler' }, content: 'Exploring the beautiful Alps today! 🏔️', location: 'Switzerland' }]);
+            setProducts([{ _id: '1', name: 'Silk Scarf', price: '$45', origin: 'India' }]);
+            setEvents([{ _id: '1', title: 'Coffee Tasting', description: 'Experience authentic Ethiopian coffee.', location: 'Addis Ababa', date: new Date() }]);
         } finally {
             setLoading(false);
         }
     };
+
+    const renderFeed = () => (
+        <ScrollView style={styles.feed}>
+            {posts.map((post) => (
+                <View key={post._id} style={styles.postCard}>
+                    <View style={styles.postHeader}>
+                        <View style={styles.avatar} />
+                        <View>
+                            <Text style={styles.author}>{post.userId?.name || 'Global Citizen'}</Text>
+                            <Text style={styles.time}>Just now • {post.location || 'Global'}</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.postContent}>{post.content}</Text>
+                    {post.media && <View style={styles.imagePlaceholder} />}
+                    <View style={styles.postFooter}>
+                        <TouchableOpacity style={styles.footerAction}>
+                            <Heart color="#94A3B8" size={20} />
+                            <Text style={styles.footerText}>{post.likes?.length || 0}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.footerAction}>
+                            <MessageSquare color="#94A3B8" size={20} />
+                            <Text style={styles.footerText}>{post.comments?.length || 0}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            ))}
+        </ScrollView>
+    );
+
+    const renderMarketplace = () => (
+        <ScrollView style={styles.feed}>
+            <Text style={styles.sectionTitle}>Global Marketplace</Text>
+            <View style={styles.grid}>
+                {products.map((item) => (
+                    <View key={item._id} style={styles.productCard}>
+                        <View style={styles.productImage} />
+                        <View style={styles.productInfo}>
+                            <Text style={styles.productName}>{item.name}</Text>
+                            <Text style={styles.productPrice}>{item.price}</Text>
+                            <Text style={styles.productOrigin}>{item.origin}</Text>
+                            <TouchableOpacity style={styles.buyButton}>
+                                <Text style={styles.buyButtonText}>Buy Now</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ))}
+            </View>
+        </ScrollView>
+    );
+
+    const renderEvents = () => (
+        <ScrollView style={styles.feed}>
+            <Text style={styles.sectionTitle}>Upcoming Events</Text>
+            {events.map((event) => (
+                <View key={event._id} style={styles.eventCard}>
+                    <View style={styles.eventImage} />
+                    <View style={styles.eventInfo}>
+                        <Text style={styles.eventTitle}>{event.title}</Text>
+                        <Text style={styles.eventDate}>{new Date(event.date).toLocaleDateString()}</Text>
+                        <Text style={styles.eventDesc}>{event.description}</Text>
+                        <TouchableOpacity style={styles.joinButton}>
+                            <Text style={styles.joinButtonText}>Reserve Spot</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            ))}
+        </ScrollView>
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -41,49 +115,39 @@ export default function App() {
                     <Globe color="#FF9900" size={32} />
                     <Text style={styles.logoText}>Gipjazes Connect</Text>
                 </View>
-                <TouchableOpacity onPress={fetchPosts}>
+                <TouchableOpacity onPress={fetchData}>
                     <Bell color={loading ? '#FF9900' : '#CBD5E1'} size={24} />
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.feed}>
+            <View style={styles.content}>
                 {loading ? (
                     <ActivityIndicator size="large" color="#FF9900" style={{ marginTop: 50 }} />
                 ) : (
-                    posts.map((post) => (
-                        <View key={post._id} style={styles.postCard}>
-                            <View style={styles.postHeader}>
-                                <View style={styles.avatar} />
-                                <View>
-                                    <Text style={styles.author}>{post.userId?.name || 'Global Citizen'}</Text>
-                                    <Text style={styles.time}>Just now • {post.location || 'Global'}</Text>
-                                </View>
-                            </View>
-                            <Text style={styles.postContent}>{post.content}</Text>
-                            {post.media && <View style={styles.imagePlaceholder} />}
-                            <View style={styles.postFooter}>
-                                <TouchableOpacity style={styles.footerAction}>
-                                    <Heart color="#94A3B8" size={20} />
-                                    <Text style={styles.footerText}>{post.likes?.length || 0}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.footerAction}>
-                                    <MessageSquare color="#94A3B8" size={20} />
-                                    <Text style={styles.footerText}>{post.comments?.length || 0}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))
+                    <>
+                        {activeTab === 'feed' && renderFeed()}
+                        {activeTab === 'market' && renderMarketplace()}
+                        {activeTab === 'events' && renderEvents()}
+                    </>
                 )}
-            </ScrollView>
+            </View>
 
             <View style={styles.navBar}>
-                <Globe color="#FF9900" size={28} />
-                <MessageSquare color="#94A3B8" size={28} />
+                <TouchableOpacity onPress={() => setActiveTab('feed')}>
+                    <Globe color={activeTab === 'feed' ? '#FF9900' : '#94A3B8'} size={28} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setActiveTab('market')}>
+                    <ShoppingBag color={activeTab === 'market' ? '#FF9900' : '#94A3B8'} size={28} />
+                </TouchableOpacity>
                 <View style={styles.plusButton}>
-                    <Text style={styles.plusText}>+</Text>
+                    <Plus color="white" size={24} />
                 </View>
-                <Heart color="#94A3B8" size={28} />
-                <View style={styles.smallAvatar} />
+                <TouchableOpacity onPress={() => setActiveTab('events')}>
+                    <Calendar color={activeTab === 'events' ? '#FF9900' : '#94A3B8'} size={28} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setActiveTab('profile')}>
+                    <User color={activeTab === 'profile' ? '#FF9900' : '#94A3B8'} size={28} />
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
@@ -111,8 +175,17 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    content: {
+        flex: 1,
+    },
     feed: {
         padding: 15,
+    },
+    sectionTitle: {
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
     },
     postCard: {
         backgroundColor: '#1E293B',
@@ -169,6 +242,93 @@ const styles = StyleSheet.create({
         color: '#94A3B8',
         fontSize: 14,
     },
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    productCard: {
+        backgroundColor: '#1E293B',
+        borderRadius: 15,
+        width: '48%',
+        marginBottom: 15,
+        overflow: 'hidden',
+    },
+    productImage: {
+        height: 120,
+        backgroundColor: '#334155',
+    },
+    productInfo: {
+        padding: 10,
+    },
+    productName: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    productPrice: {
+        color: '#FF9900',
+        fontWeight: '700',
+        marginTop: 2,
+    },
+    productOrigin: {
+        color: '#64748B',
+        fontSize: 10,
+        marginTop: 2,
+    },
+    buyButton: {
+        backgroundColor: '#3CB371',
+        borderRadius: 5,
+        padding: 8,
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    buyButtonText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
+    },
+    eventCard: {
+        backgroundColor: '#1E293B',
+        borderRadius: 15,
+        marginBottom: 15,
+        overflow: 'hidden',
+    },
+    eventImage: {
+        height: 150,
+        backgroundColor: '#334155',
+    },
+    eventInfo: {
+        padding: 15,
+    },
+    eventTitle: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    eventDate: {
+        color: '#FF9900',
+        fontSize: 12,
+        fontWeight: '600',
+        marginTop: 5,
+    },
+    eventDesc: {
+        color: '#CBD5E1',
+        fontSize: 13,
+        marginTop: 10,
+        lineHeight: 18,
+    },
+    joinButton: {
+        backgroundColor: '#FF9900',
+        borderRadius: 8,
+        padding: 12,
+        marginTop: 15,
+        alignItems: 'center',
+    },
+    joinButtonText: {
+        color: 'white',
+        fontWeight: '700',
+    },
     navBar: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -192,17 +352,4 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
     },
-    plusText: {
-        color: 'white',
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    smallAvatar: {
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: '#334155',
-        borderWidth: 1,
-        borderColor: '#FF9900',
-    }
 });
