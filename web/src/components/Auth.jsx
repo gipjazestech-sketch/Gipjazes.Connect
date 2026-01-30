@@ -5,15 +5,44 @@ import { Globe, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 const Auth = ({ onLogin }) => {
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setError('');
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
+        setError('');
+
+        const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // Save token & call onLogin
+                localStorage.setItem('token', data.token);
+                onLogin({ ...data.user, isPro: true }); // Adding isPro for demo
+            } else {
+                setError(data.message || 'Something went wrong');
+            }
+        } catch (err) {
+            setError('Failed to connect to server');
+        } finally {
             setLoading(false);
-            onLogin({ name: 'Felix', email: 'felix@gipjazes.com', isPro: true });
-        }, 1500);
+        }
     };
 
     return (
@@ -40,18 +69,24 @@ const Auth = ({ onLogin }) => {
                 <div className="glass-morphism p-8">
                     <div className="flex gap-4 mb-8">
                         <button
-                            onClick={() => setIsLogin(true)}
+                            onClick={() => { setIsLogin(true); setError(''); }}
                             className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${isLogin ? 'bg-[#FF9900] text-white' : 'text-slate-500 hover:text-white'}`}
                         >
                             Log In
                         </button>
                         <button
-                            onClick={() => setIsLogin(false)}
+                            onClick={() => { setIsLogin(false); setError(''); }}
                             className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${!isLogin ? 'bg-[#FF9900] text-white' : 'text-slate-500 hover:text-white'}`}
                         >
                             Sign Up
                         </button>
                     </div>
+
+                    {error && (
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-lg text-xs font-bold mb-6 text-center animate-pulse">
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <AnimatePresence mode="wait">
@@ -67,9 +102,12 @@ const Auth = ({ onLogin }) => {
                                         <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                         <input
                                             type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
                                             placeholder="Enter your name"
                                             className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
-                                            required
+                                            required={!isLogin}
                                         />
                                     </div>
                                 </motion.div>
@@ -82,6 +120,9 @@ const Auth = ({ onLogin }) => {
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
                                     type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     placeholder="name@example.com"
                                     className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
                                     required
@@ -95,6 +136,9 @@ const Auth = ({ onLogin }) => {
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
                                     type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     placeholder="••••••••"
                                     className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
                                     required

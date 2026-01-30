@@ -624,6 +624,15 @@ function App() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // For demo, we just set a mock user if token exists
+      // In a real app, you'd verify the token with the backend
+      setUser({ name: 'Felix', email: 'felix@gipjazes.com', isPro: true });
+    }
+  }, []);
+
   const addNotification = (type, message) => {
     const id = Date.now();
     setNotifications(prev => [{ id, type, message }, ...prev]);
