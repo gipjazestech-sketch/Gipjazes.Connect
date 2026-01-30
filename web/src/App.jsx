@@ -661,7 +661,8 @@ function App() {
   ]);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000');
+    const socketUrl = import.meta.env.PROD ? window.location.origin : 'http://localhost:5000';
+    const newSocket = io(socketUrl);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
