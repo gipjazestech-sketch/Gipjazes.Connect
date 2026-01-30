@@ -4,6 +4,7 @@
   "scripts": {
     "install-all": "npm install --prefix backend && npm install --prefix web",
     "build-web": "npm run build --prefix web",
+    "build": "npm run build-web",
     "prestart": "npm run build-web",
     "start": "cd backend && npm start",
     "backend": "npm start --prefix backend",
