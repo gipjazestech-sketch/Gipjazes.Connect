@@ -40,6 +40,8 @@ app.use('/api/posts', require('./routes/posts'));
 app.use('/api/products', require('./routes/products'));
 // Group Routes
 app.use('/api/groups', require('./routes/groups'));
+// Event Routes
+app.use('/api/events', require('./routes/events'));
 
 
 // Connect to MongoDB

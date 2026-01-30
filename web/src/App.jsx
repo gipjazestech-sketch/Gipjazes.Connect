@@ -232,6 +232,53 @@ const CreatePost = ({ addPost }) => {
 };
 
 
+const Events = ({ events, joinEvent }) => (
+  <div className="space-y-6">
+    <div className="flex items-center justify-between">
+      <h2 className="text-2xl font-bold">Cultural Hub & Events</h2>
+      <button className="btn-primary py-2 px-4 text-xs">+ Host Event</button>
+    </div>
+    <div className="grid grid-cols-1 gap-6">
+      {events.map((event, i) => (
+        <motion.div
+          key={i}
+          whileHover={{ scale: 1.01 }}
+          className="glass-morphism overflow-hidden flex flex-col md:flex-row gap-6 p-4"
+        >
+          <div className="w-full md:w-48 h-48 md:h-full rounded-xl overflow-hidden shrink-0">
+            <img src={event.image || 'https://images.unsplash.com/photo-1548013146-72479768bbaa?w=800'} className="w-full h-full object-cover" />
+          </div>
+          <div className="flex-1 flex flex-col">
+            <div className="flex justify-between items-start mb-2">
+              <h4 className="font-bold text-xl">{event.title}</h4>
+              <span className="bg-[#FF9900]/20 text-[#FF9900] text-[10px] font-bold px-2 py-1 rounded">LIVE</span>
+            </div>
+            <p className="text-sm text-slate-400 mb-4 flex-1">{event.description}</p>
+            <div className="flex items-center gap-4 text-xs text-slate-500 mb-6">
+              <div className="flex items-center gap-1"><Calendar size={14} /> {new Date(event.date).toLocaleDateString()}</div>
+              <div className="flex items-center gap-1"><Globe size={14} /> {event.location}</div>
+            </div>
+            <div className="flex justify-between items-center mt-auto">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map(n => (
+                  <img key={n} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${n + i}`} className="w-8 h-8 rounded-full border-2 border-slate-900" />
+                ))}
+                <div className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold">+{event.attendees?.length || 42}</div>
+              </div>
+              <button
+                onClick={() => joinEvent(event._id)}
+                className="btn-primary py-2 px-6 text-xs"
+              >
+                Reserve Spot
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
+
 const Chat = () => (
   <div className="flex flex-col h-[calc(100vh-12rem)] glass-morphism overflow-hidden">
     <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
@@ -581,6 +628,7 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const [products, setProducts] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const addNotification = (type, message) => {
     const id = Date.now();
@@ -663,12 +711,25 @@ function App() {
     }
   };
 
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('/api/events');
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data);
+      }
+    } catch (_err) {
+      console.error('Failed to fetch events');
+    }
+  };
+
   useEffect(() => {
     if (user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchPosts();
       fetchProducts();
       fetchGroups();
+      fetchEvents();
     }
   }, [user]);
 
@@ -713,6 +774,25 @@ function App() {
       }
     } catch (_err) {
       addNotification('error', 'Failed to join group');
+    }
+  };
+
+  const joinEvent = async (eventId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/events/join/${eventId}`, {
+        method: 'PUT',
+        headers: {
+          'x-auth-token': token
+        }
+      });
+
+      if (response.ok) {
+        fetchEvents();
+        addNotification('success', 'Your spot is reserved! 📅');
+      }
+    } catch (_err) {
+      addNotification('error', 'Failed to join event');
     }
   };
 
@@ -797,6 +877,8 @@ function App() {
           <Chat />
         ) : activeTab === 'groups' ? (
           <Groups groups={groups} joinGroup={joinGroup} />
+        ) : activeTab === 'events' ? (
+          <Events events={events} joinEvent={joinEvent} />
         ) : activeTab === 'profile' ? (
           <Profile />
         ) : activeTab === 'analytics' ? (
