@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
@@ -38,7 +38,7 @@ const Auth = ({ onLogin }) => {
             } else {
                 setError(data.message || 'Something went wrong');
             }
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to connect to server');
         } finally {
             setLoading(false);

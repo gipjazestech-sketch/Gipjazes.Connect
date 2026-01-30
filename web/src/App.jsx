@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Home,
   MessageCircle,
@@ -284,30 +284,29 @@ const Chat = () => (
   </div>
 );
 
-const Groups = () => (
+const Groups = ({ groups, joinGroup }) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <h2 className="text-2xl font-bold">Cultural Communities</h2>
       <button className="btn-primary py-2 px-4 text-xs">+ Create Group</button>
     </div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {[
-        { name: 'Gourmet World', members: '12.4k', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600', color: 'bg-orange-500' },
-        { name: 'Travel Pioneers', members: '8.2k', img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600', color: 'bg-blue-500' },
-        { name: 'EcoConnect', members: '5.1k', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600', color: 'bg-green-500' },
-        { name: 'Tech Global', members: '15.9k', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600', color: 'bg-purple-500' }
-      ].map((group, i) => (
+      {groups.map((group, i) => (
         <motion.div
           key={i}
           whileHover={{ scale: 1.02 }}
           className="glass-morphism overflow-hidden relative group cursor-pointer"
+          onClick={() => joinGroup(group._id)}
         >
           <div className="h-32 w-full overflow-hidden">
-            <img src={group.img} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+            <img src={group.image || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600'} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
           </div>
           <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 to-transparent">
             <h4 className="font-bold text-lg">{group.name}</h4>
-            <p className="text-xs text-slate-300">{group.members} members</p>
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-slate-300">{group.members?.length || 0} members</p>
+              <button className="text-[10px] font-bold text-[#FF9900] uppercase tracking-widest hover:underline">Join Now</button>
+            </div>
           </div>
         </motion.div>
       ))}
@@ -426,31 +425,28 @@ const Analytics = () => (
   </div>
 );
 
-const Marketplace = () => (
-
+const Marketplace = ({ products, purchaseProduct }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {[
-      { name: 'Handcrafted Vase', price: '$45', origin: 'Mexico', img: 'https://images.unsplash.com/photo-1612196808214-b9e1d614e38c?w=400' },
-      { name: 'Silk Scarf', price: '$30', origin: 'India', img: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=400' },
-      { name: 'Coffee Beans', price: '$25', origin: 'Ethiopia', img: 'https://images.unsplash.com/photo-1559056191-7440026e952d?w=400' },
-      { name: 'Wood Carving', price: '$60', origin: 'Kenya', img: 'https://images.unsplash.com/photo-1605722243479-7df93f550117?w=400' }
-    ].map((item, i) => (
+    {products.map((item, i) => (
       <motion.div
         key={i}
         whileHover={{ y: -5 }}
         className="glass-morphism overflow-hidden group"
       >
         <div className="h-40 overflow-hidden">
-          <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <img src={item.image || 'https://images.unsplash.com/photo-1612196808214-b9e1d614e38c?w=400'} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
         </div>
         <div className="p-4">
           <div className="flex justify-between items-start mb-1">
             <h4 className="font-bold text-sm">{item.name}</h4>
             <span className="text-[#3CB371] font-bold">{item.price}</span>
           </div>
-          <p className="text-xs text-slate-500">Origin: {item.origin}</p>
-          <button className="w-full mt-4 btn-primary py-2 text-xs justify-center bg-slate-800 hover:bg-[#FF9900] border-none">
-            View Details
+          <p className="text-xs text-slate-500">Origin: {item.origin || 'Global'}</p>
+          <button
+            onClick={() => purchaseProduct(item._id, item.price)}
+            className="w-full mt-4 btn-primary py-2 text-xs justify-center bg-slate-800 hover:bg-[#FF9900] border-none"
+          >
+            Buy Now
           </button>
         </div>
       </motion.div>
@@ -566,7 +562,7 @@ const RightPanel = () => (
       </h3>
       <div className="flex justify-between items-end">
         <div>
-          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Today's Commission</p>
+          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">Today&apos;s Commission</p>
           <p className="text-xl font-bold text-[#FF9900]">$4,290.50</p>
         </div>
         <div className="text-[10px] text-[#3CB371] font-bold">+12.4%</div>
@@ -578,8 +574,22 @@ const RightPanel = () => (
 
 function App() {
   const [activeTab, setActiveTab] = useState('feed');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem('token');
+    return token ? { name: 'Felix', email: 'felix@gipjazes.com', isPro: true } : null;
+  });
   const [notifications, setNotifications] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [groups, setGroups] = useState([]);
+
+  const addNotification = (type, message) => {
+    const id = Date.now();
+    setNotifications(prev => [{ id, type, message }, ...prev]);
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 5000);
+  };
+
   const [feedPosts, setFeedPosts] = useState([
     {
       author: "Elena",
@@ -624,14 +634,87 @@ function App() {
         }));
         setFeedPosts(prev => [...prev.filter(p => p.author === 'Global Brand'), ...mappedPosts]);
       }
-    } catch (err) {
+    } catch (_err) {
       console.error('Failed to fetch posts');
     }
   };
 
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
+    } catch (_err) {
+      console.error('Failed to fetch products');
+    }
+  };
+
+  const fetchGroups = async () => {
+    try {
+      const response = await fetch('/api/groups');
+      if (response.ok) {
+        const data = await response.json();
+        setGroups(data);
+      }
+    } catch (_err) {
+      console.error('Failed to fetch groups');
+    }
+  };
+
   useEffect(() => {
-    if (user) fetchPosts();
+    if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchPosts();
+      fetchProducts();
+      fetchGroups();
+    }
   }, [user]);
+
+  const purchaseProduct = async (productId, price) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/products/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify({
+          productId,
+          quantity: 1,
+          totalPrice: price,
+          shippingAddress: 'Digital Delivery'
+        })
+      });
+
+      if (response.ok) {
+        addNotification('success', `Purchase successful! ${price} deducted. 🛍️`);
+      }
+    } catch (_err) {
+      addNotification('error', 'Purchase failed');
+    }
+  };
+
+  const joinGroup = async (groupId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/groups/join/${groupId}`, {
+        method: 'PUT',
+        headers: {
+          'x-auth-token': token
+        }
+      });
+
+      if (response.ok) {
+        fetchGroups();
+        addNotification('success', 'Welcome to the community! 🤝');
+      }
+    } catch (_err) {
+      addNotification('error', 'Failed to join group');
+    }
+  };
 
   const addPost = async (newPost) => {
     try {
@@ -653,7 +736,7 @@ function App() {
         fetchPosts(); // Refresh feed
         addNotification('success', 'Post published globally! 🌍');
       }
-    } catch (err) {
+    } catch (_err) {
       addNotification('error', 'Failed to publish post');
     }
   };
@@ -669,22 +752,7 @@ function App() {
     }
   }, [user]);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // For demo, we just set a mock user if token exists
-      // In a real app, you'd verify the token with the backend
-      setUser({ name: 'Felix', email: 'felix@gipjazes.com', isPro: true });
-    }
-  }, []);
 
-  const addNotification = (type, message) => {
-    const id = Date.now();
-    setNotifications(prev => [{ id, type, message }, ...prev]);
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== id));
-    }, 5000);
-  };
 
   if (!user) {
     return <Auth onLogin={(userData) => setUser(userData)} />;
@@ -721,14 +789,14 @@ function App() {
                 <button className="p-2 glass-morphism text-xs px-4">My Orders</button>
               </div>
             </div>
-            <Marketplace />
+            <Marketplace products={products} purchaseProduct={purchaseProduct} />
           </div>
         ) : activeTab === 'merchants' ? (
           <MerchantCenter />
         ) : activeTab === 'chat' ? (
           <Chat />
         ) : activeTab === 'groups' ? (
-          <Groups />
+          <Groups groups={groups} joinGroup={joinGroup} />
         ) : activeTab === 'profile' ? (
           <Profile />
         ) : activeTab === 'analytics' ? (

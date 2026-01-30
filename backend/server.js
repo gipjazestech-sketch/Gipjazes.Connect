@@ -36,13 +36,21 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/auth', require('./routes/auth'));
 // Post Routes
 app.use('/api/posts', require('./routes/posts'));
+// Product Routes
+app.use('/api/products', require('./routes/products'));
+// Group Routes
+app.use('/api/groups', require('./routes/groups'));
+
 
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/globalconnect';
+global.isDemoMode = false;
+
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => {
-        console.error('Could not connect to MongoDB. Demo mode active.');
+        console.error('Could not connect to MongoDB. Switching to Demo Mode (In-Memory).');
+        global.isDemoMode = true;
     });
 
 app.listen(PORT, () => {

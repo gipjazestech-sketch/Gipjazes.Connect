@@ -21,12 +21,29 @@ const auth = (req, res, next) => {
 // Create Post
 router.post('/', auth, async (req, res) => {
     try {
-        const { content, media, mediaType } = req.body;
+        const { content, media, mediaType, location } = req.body;
+        if (global.isDemoMode) {
+            const mockDB = require('../mockDB');
+            const newPost = {
+                _id: Date.now().toString(),
+                userId: { _id: req.user.id, name: 'Demo User' },
+                content,
+                media,
+                mediaType,
+                location: location || 'Global',
+                likes: [],
+                comments: [],
+                createdAt: new Date()
+            };
+            mockDB.posts.unshift(newPost);
+            return res.json(newPost);
+        }
         const newPost = new Post({
             userId: req.user.id,
             content,
             media,
-            mediaType
+            mediaType,
+            location
         });
         const post = await newPost.save();
         res.json(post);
@@ -38,6 +55,10 @@ router.post('/', auth, async (req, res) => {
 // Get Feed
 router.get('/', async (req, res) => {
     try {
+        if (global.isDemoMode) {
+            const mockDB = require('../mockDB');
+            return res.json(mockDB.posts);
+        }
         const posts = await Post.find().sort({ createdAt: -1 }).populate('userId', 'name profilePic');
         res.json(posts);
     } catch (err) {
@@ -48,6 +69,17 @@ router.get('/', async (req, res) => {
 // Like Post
 router.put('/like/:id', auth, async (req, res) => {
     try {
+        if (global.isDemoMode) {
+            const mockDB = require('../mockDB');
+            const post = mockDB.posts.find(p => p._id === req.params.id);
+            if (!post) return res.status(404).json({ message: 'Post not found' });
+            if (post.likes.includes(req.user.id)) {
+                post.likes = post.likes.filter(id => id !== req.user.id);
+            } else {
+                post.likes.push(req.user.id);
+            }
+            return res.json(post.likes);
+        }
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).json({ message: 'Post not found' });
 
@@ -58,6 +90,34 @@ router.put('/like/:id', auth, async (req, res) => {
         }
         await post.save();
         res.json(post.likes);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Add Comment
+router.post('/comment/:id', auth, async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (global.isDemoMode) {
+            const mockDB = require('../mockDB');
+            const post = mockDB.posts.find(p => p._id === req.params.id);
+            if (!post) return res.status(404).json({ message: 'Post not found' });
+            const newComment = { _id: Date.now().toString(), userId: req.user.id, text, createdAt: new Date() };
+            post.comments.push(newComment);
+            return res.json(post.comments);
+        }
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+
+        const newComment = {
+            userId: req.user.id,
+            text
+        };
+
+        post.comments.push(newComment);
+        await post.save();
+        res.json(post.comments);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }

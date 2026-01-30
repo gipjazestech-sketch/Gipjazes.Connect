@@ -11,6 +11,7 @@ const PostSchema = new mongoose.Schema({
     content: { type: String, required: true },
     media: { type: String }, // S3 URL
     mediaType: { type: String, enum: ['image', 'video', 'none'], default: 'none' },
+    location: { type: String, default: 'Global' },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [CommentSchema],
     createdAt: { type: Date, default: Date.now }

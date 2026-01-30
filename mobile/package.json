@@ -1,0 +1,11 @@
+{
+    "name": "mobile",
+    "version": "1.0.0",
+    "main": "App.js",
+    "dependencies": {
+        "react": "18.3.1",
+        "react-native": "0.76.1",
+        "lucide-react-native": "^0.474.0",
+        "react-native-svg": "^15.11.1"
+    }
+}

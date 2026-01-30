@@ -1,8 +1,39 @@
-import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Globe, Heart, MessageSquare, Bell } from 'lucide-react-native';
 
 export default function App() {
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const fetchPosts = async () => {
+        try {
+            // Using localhost for development (would need IP for real device)
+            const response = await fetch('http://localhost:5000/api/posts');
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+            // Fallback for demo if fetch fails
+            setPosts([
+                {
+                    _id: '1',
+                    userId: { name: 'Global Traveler' },
+                    content: 'Exploring the beautiful Alps today. The air is so fresh here! 🏔️✨',
+                    location: 'Switzerland',
+                    likes: [],
+                    comments: []
+                }
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -10,37 +41,39 @@ export default function App() {
                     <Globe color="#FF9900" size={32} />
                     <Text style={styles.logoText}>Gipjazes Connect</Text>
                 </View>
-                <TouchableOpacity>
-                    <Bell color="#CBD5E1" size={24} />
+                <TouchableOpacity onPress={fetchPosts}>
+                    <Bell color={loading ? '#FF9900' : '#CBD5E1'} size={24} />
                 </TouchableOpacity>
             </View>
 
             <ScrollView style={styles.feed}>
-                {[1, 2, 3].map((item) => (
-                    <View key={item} style={styles.postCard}>
-                        <View style={styles.postHeader}>
-                            <View style={styles.avatar} />
-                            <View>
-                                <Text style={styles.author}>Global Traveler</Text>
-                                <Text style={styles.time}>3h ago • Switzerland</Text>
+                {loading ? (
+                    <ActivityIndicator size="large" color="#FF9900" style={{ marginTop: 50 }} />
+                ) : (
+                    posts.map((post) => (
+                        <View key={post._id} style={styles.postCard}>
+                            <View style={styles.postHeader}>
+                                <View style={styles.avatar} />
+                                <View>
+                                    <Text style={styles.author}>{post.userId?.name || 'Global Citizen'}</Text>
+                                    <Text style={styles.time}>Just now • {post.location || 'Global'}</Text>
+                                </View>
+                            </View>
+                            <Text style={styles.postContent}>{post.content}</Text>
+                            {post.media && <View style={styles.imagePlaceholder} />}
+                            <View style={styles.postFooter}>
+                                <TouchableOpacity style={styles.footerAction}>
+                                    <Heart color="#94A3B8" size={20} />
+                                    <Text style={styles.footerText}>{post.likes?.length || 0}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.footerAction}>
+                                    <MessageSquare color="#94A3B8" size={20} />
+                                    <Text style={styles.footerText}>{post.comments?.length || 0}</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
-                        <Text style={styles.postContent}>
-                            Exploring the beautiful Alps today. The air is so fresh here! 🏔️✨
-                        </Text>
-                        <View style={styles.imagePlaceholder} />
-                        <View style={styles.postFooter}>
-                            <TouchableOpacity style={styles.footerAction}>
-                                <Heart color="#94A3B8" size={20} />
-                                <Text style={styles.footerText}>1.2k</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.footerAction}>
-                                <MessageSquare color="#94A3B8" size={20} />
-                                <Text style={styles.footerText}>48</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
+                    ))
+                )}
             </ScrollView>
 
             <View style={styles.navBar}>

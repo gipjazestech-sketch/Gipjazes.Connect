@@ -10,6 +10,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
+        if (global.isDemoMode) {
+            return res.json({ token: 'mock_token', user: { id: 'u1', name, email } });
+        }
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: 'User already exists' });
 
@@ -29,6 +32,9 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        if (global.isDemoMode) {
+            return res.json({ token: 'mock_token', user: { id: 'u1', name: 'Demo User', email } });
+        }
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
