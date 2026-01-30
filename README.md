@@ -3,11 +3,12 @@
 A vibrant, global social media platform designed for connection and cultural exchange.
 
 ## Features
-- **Real-time Feed**: Share text, images, and videos with a global audience.
-- **Gipjazes Marketplace**: Buy and sell unique items from different cultures.
-- **Encrypted Messaging**: Secure end-to-end encrypted chats.
-- **Cultural Hub**: Discover events and trending topics from around the world.
-- **Micro-Tipping**: Support your favorite creators (Coming Soon).
+- **Real-time Feed**: Share text, images, and videos with a global audience (Web & Mobile).
+- **Gipjazes Marketplace**: Buy and sell unique items from different cultures (Web & Mobile).
+- **Encrypted Messaging**: Secure end-to-end encrypted chats (Web).
+- **Cultural Hub**: Discover events and trending topics from around the world (Web & Mobile).
+- **Micro-Tipping**: Support your favorite creators (Web).
+- **Mobile Experience**: Fully integrated tab navigation with Feed, Marketplace, and Events screens.
 
 ## Tech Stack
 - **Frontend**: React.js (Web), React Native (Mobile)
