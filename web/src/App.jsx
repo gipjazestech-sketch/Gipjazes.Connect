@@ -608,9 +608,54 @@ function App() {
 
   ]);
 
-  const addPost = (newPost) => {
-    setFeedPosts([newPost, ...feedPosts]);
-    addNotification('success', 'Post published globally! 🌍');
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('/api/posts');
+      if (response.ok) {
+        const data = await response.json();
+        // Map backend data to frontend format
+        const mappedPosts = data.map(post => ({
+          author: post.userId?.name || 'Unknown User',
+          time: new Date(post.createdAt).toLocaleDateString() + ' • ' + (post.location || 'Global'),
+          content: post.content,
+          image: post.media,
+          likes: post.likes.length.toString(),
+          comments: '0' // Comments not implemented in backend yet
+        }));
+        setFeedPosts(prev => [...prev.filter(p => p.author === 'Global Brand'), ...mappedPosts]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch posts');
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchPosts();
+  }, [user]);
+
+  const addPost = async (newPost) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify({
+          content: newPost.content,
+          media: newPost.image,
+          mediaType: 'image'
+        })
+      });
+
+      if (response.ok) {
+        fetchPosts(); // Refresh feed
+        addNotification('success', 'Post published globally! 🌍');
+      }
+    } catch (err) {
+      addNotification('error', 'Failed to publish post');
+    }
   };
 
   // Auto-trigger mock notifications for demo
