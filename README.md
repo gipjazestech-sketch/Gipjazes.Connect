@@ -34,3 +34,21 @@ A vibrant, global social media platform designed for connection and cultural exc
 
 ## Multi-User Testing
 Use the **Antigravity Browser Extension** to test multiple user sessions simultaneously.
+
+## Deployment 🚀
+
+### 1. Push to GitHub
+1. Create a new repository on [GitHub](https://github.com/new).
+2. Run the following in your terminal:
+   ```powershell
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+### 2. Deploy to Vercel
+1. Go to [Vercel](https://vercel.com/new).
+2. Import your GitHub repository.
+3. Vercel will auto-detect the monorepo settings.
+4. Add your **Environment Variables** (from `.env.example`) in the Vercel dashboard.
+5. Click **Deploy**.
