@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Mail, Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
 
@@ -11,6 +11,22 @@ const Auth = ({ onLogin }) => {
         email: '',
         password: ''
     });
+    const [serverStatus, setServerStatus] = useState('checking'); // 'checking', 'online', 'offline'
+
+    useEffect(() => {
+        const checkStatus = async () => {
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/status');
+                if (res.ok) setServerStatus('online');
+                else setServerStatus('offline');
+            } catch (_err) {
+                setServerStatus('offline');
+            }
+        };
+        checkStatus();
+        const interval = setInterval(checkStatus, 10000);
+        return () => clearInterval(interval);
+    }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,7 +38,8 @@ const Auth = ({ onLogin }) => {
         setLoading(true);
         setError('');
 
-        const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+        const baseUrl = 'http://127.0.0.1:5000';
+        const endpoint = isLogin ? `${baseUrl}/api/auth/login` : `${baseUrl}/api/auth/register`;
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
@@ -34,61 +51,84 @@ const Auth = ({ onLogin }) => {
             if (response.ok) {
                 // Save token & call onLogin
                 localStorage.setItem('token', data.token);
-                onLogin({ ...data.user, isPro: true }); // Adding isPro for demo
+                onLogin({
+                    ...data.user,
+                    isPro: true,
+                    profilePic: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.user.name}`
+                });
             } else {
                 setError(data.message || 'Something went wrong');
             }
-        } catch (_err) {
-            setError('Failed to connect to server');
+        } catch (err) {
+            console.error('Auth Connection Error:', err);
+            setError('The world server is temporarily unreachable. Please retry shortly.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Decorative Elements */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#FF9900]/10 rounded-full blur-[120px]"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#2F4F7F]/20 rounded-full blur-[120px]"></div>
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden selection:bg-yellow-200">
+            {/* Radiant Background Effects */}
+            <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-[#FFD700]/10 rounded-full blur-[160px] animate-pulse"></div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#4A90E2]/10 rounded-full blur-[160px]"></div>
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md relative z-10"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, cubicBezier: [0.16, 1, 0.3, 1] }}
+                className="w-full max-w-[440px] relative z-10"
             >
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-[#FF9900] rounded-2xl shadow-2xl shadow-orange-500/20 mb-6 motion-safe:animate-bounce">
-                        <Globe className="text-white" size={32} />
+                <div className="text-center mb-12">
+                    <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#FFD700] to-[#FFB800] rounded-[30px] shadow-2xl shadow-yellow-500/40 mb-8 rotate-6 hover:rotate-0 transition-transform duration-700 cursor-pointer">
+                        <Globe className="text-slate-900" size={40} />
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">
-                        Gipjazes<span className="text-[#FF9900]"> Connect</span>
+                    <h1 className="text-4xl font-black tracking-tighter mb-3 text-slate-900">
+                        Gipjazes<span className="gradient-text-gold"> Connect</span>
                     </h1>
-                    <p className="text-slate-400 text-sm">Join the global heartbeat 🌐</p>
+                    <p className="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px]">Your Gateway to the Digital World</p>
                 </div>
 
-                <div className="glass-morphism p-8">
-                    <div className="flex gap-4 mb-8">
+                <div className="shine-card p-10 bg-white/80 backdrop-blur-3xl border-white ring-8 ring-slate-100/50">
+                    <div className="flex justify-center mb-8">
+                        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${serverStatus === 'online' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
+                            serverStatus === 'offline' ? 'bg-rose-50 border-rose-100 text-rose-500 shadow-lg shadow-rose-100' :
+                                'bg-slate-50 border-slate-100 text-slate-400'
+                            }`}>
+                            <div className={`w-2 h-2 rounded-full ${serverStatus === 'online' ? 'bg-emerald-500 animate-pulse' :
+                                serverStatus === 'offline' ? 'bg-rose-500' : 'bg-slate-300'
+                                }`}></div>
+                            {serverStatus === 'online' ? 'Cloud Network Active' :
+                                serverStatus === 'offline' ? 'Connection Interrupted' : 'Initializing Neural Link...'}
+                        </div>
+                    </div>
+
+                    <div className="flex p-1.5 bg-slate-100/50 rounded-2xl mb-10">
                         <button
                             onClick={() => { setIsLogin(true); setError(''); }}
-                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${isLogin ? 'bg-[#FF9900] text-white' : 'text-slate-500 hover:text-white'}`}
+                            className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${isLogin ? 'bg-white shadow-xl text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
                         >
-                            Log In
+                            Sign In
                         </button>
                         <button
                             onClick={() => { setIsLogin(false); setError(''); }}
-                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${!isLogin ? 'bg-[#FF9900] text-white' : 'text-slate-500 hover:text-white'}`}
+                            className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all duration-300 ${!isLogin ? 'bg-white shadow-xl text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
                         >
-                            Sign Up
+                            Register
                         </button>
                     </div>
 
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-lg text-xs font-bold mb-6 text-center animate-pulse">
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-rose-50 border border-rose-100 text-rose-500 p-4 rounded-2xl text-[11px] font-bold mb-8 text-center"
+                        >
                             {error}
-                        </div>
+                        </motion.div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <AnimatePresence mode="wait">
                             {!isLogin && (
                                 <motion.div
@@ -97,16 +137,16 @@ const Auth = ({ onLogin }) => {
                                     exit={{ opacity: 0, height: 0 }}
                                     className="space-y-2"
                                 >
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Identity</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#FFD700] transition-colors" size={20} />
                                         <input
                                             type="text"
                                             name="name"
                                             value={formData.name}
                                             onChange={handleChange}
                                             placeholder="Enter your name"
-                                            className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
+                                            className="w-full bg-slate-50 border border-slate-100 rounded-[20px] py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-[#FFD700]/10 focus:bg-white focus:border-[#FFD700]/50 transition-all text-sm font-semibold"
                                             required={!isLogin}
                                         />
                                     </div>
@@ -115,67 +155,69 @@ const Auth = ({ onLogin }) => {
                         </AnimatePresence>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase">Email Address</label>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Universal ID</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#FFD700] transition-colors" size={20} />
                                 <input
                                     type="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    placeholder="name@example.com"
-                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
+                                    placeholder="name@domain.com"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-[20px] py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-[#FFD700]/10 focus:bg-white focus:border-[#FFD700]/50 transition-all text-sm font-semibold"
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Security Key</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-[#FFD700] transition-colors" size={20} />
                                 <input
                                     type="password"
                                     name="password"
                                     value={formData.password}
                                     onChange={handleChange}
-                                    placeholder="••••••••"
-                                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FF9900]/50 transition-all text-sm"
+                                    placeholder="••••••••••••"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-[20px] py-4 pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-[#FFD700]/10 focus:bg-white focus:border-[#FFD700]/50 transition-all text-sm font-semibold"
                                     required
                                 />
                             </div>
                         </div>
 
                         {isLogin && (
-                            <div className="flex justify-end">
-                                <button type="button" className="text-[10px] text-[#FF9900] font-bold hover:underline">Forgot Password?</button>
+                            <div className="flex justify-end pr-1">
+                                <button type="button" className="text-[10px] text-slate-400 font-black uppercase tracking-widest hover:text-slate-900 transition-colors">Reset Access?</button>
                             </div>
                         )}
 
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full btn-primary justify-center py-4 mt-4 relative overflow-hidden group"
+                            className={`w-full py-5 rounded-[22px] btn-shine justify-center mt-6 shadow-2xl ${loading ? 'opacity-70 scale-95' : ''}`}
                         >
-                            <span className={`flex items-center gap-2 transition-all ${loading ? 'opacity-0' : 'opacity-100'}`}>
-                                {isLogin ? 'Enter The Hub' : 'Create Account'} <ArrowRight size={18} />
+                            <span className={`flex items-center gap-3 transition-all ${loading ? 'opacity-0' : 'opacity-100'}`}>
+                                {isLogin ? 'Initiate Link' : 'Forge Identity'} <ArrowRight size={20} />
                             </span>
                             {loading && (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                                    <div className="w-6 h-6 border-4 border-slate-900/10 border-t-slate-900 rounded-full animate-spin"></div>
                                 </div>
                             )}
                         </button>
                     </form>
 
-                    <p className="text-center text-[10px] text-slate-500 mt-8 flex items-center justify-center gap-1">
-                        <ShieldCheck size={12} className="text-[#3CB371]" /> 256-bit Encrypted Connection Active
-                    </p>
+                    <div className="mt-10 pt-8 border-t border-slate-100 text-center">
+                        <div className="inline-flex items-center gap-2 text-[#22c55e] font-black text-[9px] tracking-[0.2em] uppercase">
+                            <ShieldCheck size={14} className="animate-pulse" /> E2E Shield Active
+                        </div>
+                    </div>
                 </div>
 
                 {!isLogin && (
-                    <p className="text-center mt-6 text-xs text-slate-400">
-                        By signing up, you agree to our <span className="text-white cursor-pointer hover:underline">Terms of Service</span> and <span className="text-white cursor-pointer hover:underline">Privacy Policy</span>.
+                    <p className="text-center mt-8 text-[10px] font-black text-slate-400 uppercase tracking-widest px-8 leading-relaxed">
+                        By forging a link, you agree to our <span className="text-slate-900 cursor-pointer">Global Protocols</span> and <span className="text-slate-900 cursor-pointer">Privacy Charter</span>.
                     </p>
                 )}
             </motion.div>

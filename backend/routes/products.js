@@ -77,4 +77,22 @@ router.post('/purchase', auth, async (req, res) => {
     }
 });
 
+// Get user orders (Buyer & Seller)
+router.get('/orders', auth, async (req, res) => {
+    try {
+        if (global.isDemoMode) {
+            const mockDB = require('../mockDB');
+            const userOrders = mockDB.orders.filter(o => o.buyer === req.user.id || o.seller === req.user.id);
+            return res.json(userOrders);
+        }
+        const orders = await Order.find({
+            $or: [{ buyer: req.user.id }, { seller: req.user.id }]
+        }).populate('product').populate('buyer', 'name');
+        res.json(orders);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
+

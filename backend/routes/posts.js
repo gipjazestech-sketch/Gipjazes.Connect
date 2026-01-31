@@ -5,6 +5,20 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
+const multer = require('multer');
+const path = require('path');
+
+// Multer Config
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage });
+
 // Middleware to verify JWT
 const auth = (req, res, next) => {
     const token = req.header('x-auth-token');
@@ -17,6 +31,13 @@ const auth = (req, res, next) => {
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
+
+// Upload Route
+router.post('/upload', auth, upload.single('image'), (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    const url = `http://127.0.0.1:5000/uploads/${req.file.filename}`;
+    res.json({ url });
+});
 
 // Create Post
 router.post('/', auth, async (req, res) => {
