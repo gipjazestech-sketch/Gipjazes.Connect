@@ -94,7 +94,7 @@ mongoose.connect(MONGODB_URI)
 
 // Serve index.html for any remaining non-API routes in production
 if (process.env.NODE_ENV === 'production') {
-    app.get('/*', (req, res) => {
+    app.get('/:path*', (req, res) => {
         if (!req.url.startsWith('/api')) {
             res.sendFile(path.resolve(__dirname, '../web', 'dist', 'index.html'));
         }
