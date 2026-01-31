@@ -25,11 +25,11 @@ import Auth from './components/Auth';
 const Navbar = ({ setActiveTab }) => (
   <nav className="fixed top-0 left-0 right-0 h-20 nav-blur z-50 px-8 flex items-center justify-between">
     <div className="flex items-center gap-3">
-      <div className="w-12 h-12 bg-gradient-to-br from-[#FFD700] to-[#FFB800] rounded-2xl flex items-center justify-center shadow-xl shadow-yellow-500/30 rotate-3">
-        <Globe className="text-slate-900" size={28} />
+      <div className="w-12 h-12 bg-gradient-to-br from-[#8B5CF6] via-[#3B82F6] to-[#06B6D4] rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/20 rotate-3">
+        <Globe className="text-white" size={28} />
       </div>
       <h1 className="text-2xl font-black tracking-tight hidden md:block text-slate-900">
-        Gipjazes<span className="gradient-text-gold"> Connect</span>
+        Gipjazes<span className="gradient-text-multi"> Connect</span>
       </h1>
     </div>
 
@@ -39,22 +39,24 @@ const Navbar = ({ setActiveTab }) => (
         <input
           type="text"
           placeholder="Search the global network..."
-          className="w-full bg-slate-100/50 border border-slate-200 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-[#FFD700]/50 transition-all font-medium placeholder-slate-400"
+          className="w-full bg-slate-100/50 border border-slate-200 rounded-2xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-all font-medium placeholder-slate-400"
         />
       </div>
     </div>
 
     <div className="flex items-center gap-6">
       <button className="p-2.5 hover:bg-slate-100 rounded-2xl transition-all relative group">
-        <Bell size={22} className="text-slate-600 group-hover:text-amber-500" />
-        <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+        <Bell size={22} className="text-slate-600 group-hover:text-rose-500" />
+        <span className="absolute top-2 right-2 w-3 h-3 bg-rose-500 rounded-full border-2 border-white"></span>
       </button>
       <button className="p-2.5 hover:bg-slate-100 rounded-2xl transition-all group">
-        <MessageCircle size={22} className="text-slate-600 group-hover:text-blue-500" />
+        <MessageCircle size={22} className="text-slate-600 group-hover:text-indigo-500" />
       </button>
       <div className="relative group cursor-pointer hover:scale-105 transition-transform" onClick={() => setActiveTab('profile')}>
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-11 h-11 rounded-2xl border-2 border-[#FFD700] shadow-lg shadow-yellow-500/20" />
-        <span className="absolute -bottom-1 -right-1 bg-slate-900 text-white text-[8px] font-black px-2 py-0.5 rounded-lg border-2 border-white">PRO</span>
+        <div className="p-0.5 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#F43F5E] shadow-lg shadow-indigo-500/10">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" className="w-10 h-10 rounded-[14px] bg-white" />
+        </div>
+        <span className="absolute -bottom-1 -right-1 bg-slate-900 text-white text-[8px] font-black px-2 py-0.5 rounded-lg border-2 border-white uppercase tracking-tighter">Elite</span>
       </div>
     </div>
   </nav>
@@ -62,13 +64,13 @@ const Navbar = ({ setActiveTab }) => (
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const menuItems = [
-    { id: 'feed', icon: <Home size={22} />, label: 'Feed' },
-    { id: 'groups', icon: <Users size={22} />, label: 'Groups' },
-    { id: 'events', icon: <Calendar size={22} />, label: 'Events' },
-    { id: 'marketplace', icon: <ShoppingBag size={22} />, label: 'Marketplace' },
-    { id: 'merchants', icon: <Calendar size={22} />, label: 'Merchant Hub' },
-    { id: 'chat', icon: <ShieldCheck size={22} />, label: 'Global Chat' },
-    { id: 'analytics', icon: <Settings size={22} />, label: 'Analytics' },
+    { id: 'feed', icon: <Home size={22} />, label: 'Feed', color: 'tab-violet' },
+    { id: 'groups', icon: <Users size={22} />, label: 'Groups', color: 'tab-blue' },
+    { id: 'events', icon: <Calendar size={22} />, label: 'Events', color: 'tab-emerald' },
+    { id: 'marketplace', icon: <ShoppingBag size={22} />, label: 'Marketplace', color: 'tab-blue' },
+    { id: 'merchants', icon: <Calendar size={22} />, label: 'Merchant Hub', color: 'tab-rose' },
+    { id: 'chat', icon: <ShieldCheck size={22} />, label: 'Global Chat', color: 'tab-cyan' },
+    { id: 'analytics', icon: <Settings size={22} />, label: 'Analytics', color: 'tab-amber' },
   ];
 
   return (
@@ -78,10 +80,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`flex items-center gap-5 p-4 rounded-2xl transition-all duration-300 ${activeTab === item.id ? 'bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-slate-900 shadow-xl shadow-yellow-500/20 font-bold translate-x-1' : 'text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-soft'}`}
+            className={`flex items-center gap-5 p-4 rounded-2xl transition-all duration-400 ${activeTab === item.id
+              ? 'sidebar-item-active font-bold translate-x-1'
+              : 'sidebar-item'}`}
           >
-            <span className={activeTab === item.id ? 'text-slate-900' : 'text-slate-400'}>{item.icon}</span>
-            <span className="text-sm tracking-wide">{item.label}</span>
+            <span className={activeTab === item.id ? 'text-white' : ''}>{item.icon}</span>
+            <span className="text-[13px] font-black uppercase tracking-widest">{item.label}</span>
           </button>
         ))}
         {/* Logout Button */}
@@ -90,19 +94,23 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             localStorage.removeItem('token');
             window.location.reload();
           }}
-          className="flex items-center gap-5 p-4 rounded-2xl text-red-400 hover:bg-red-50 hover:text-red-500 transition-all mt-6"
+          className="flex items-center gap-5 p-4 rounded-2xl text-rose-400 hover:bg-rose-50 hover:text-rose-500 transition-all mt-6"
         >
           <X size={22} />
-          <span className="text-sm font-bold">Sign Out</span>
+          <span className="text-[11px] font-black uppercase tracking-widest">Sign Out</span>
         </button>
       </div>
 
-      <div className="mt-16 p-6 glass-morphism border-none bg-blue-50/50">
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Trending Globally</h3>
-        <div className="flex flex-col gap-4">
-          {['#LunarNewYear', '#Carnival2026', '#GlobalBridge'].map(tag => (
-            <a key={tag} href="#" className="text-xs font-bold text-slate-600 hover:text-blue-500 transition-colors flex items-center gap-2">
-              <div className="w-1 h-1 rounded-full bg-blue-400"></div> {tag}
+      <div className="mt-20 p-8 shine-card border-none bg-indigo-50/50">
+        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Trending Globally</h3>
+        <div className="flex flex-col gap-5">
+          {[
+            { tag: '#CultureBridge', color: 'text-indigo-500' },
+            { tag: '#DigitalSafe', color: 'text-emerald-500' },
+            { tag: '#GlobalConnect', color: 'text-rose-500' }
+          ].map(item => (
+            <a key={item.tag} href="#" className={`text-[12px] font-black ${item.color} transition-all flex items-center gap-3 hover:translate-x-1`}>
+              <div className="w-1.5 h-1.5 rounded-full bg-current opacity-20"></div> {item.tag}
             </a>
           ))}
         </div>
@@ -113,30 +121,32 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
 const Stories = () => {
   const stories = [
-    { id: 1, name: 'Your Story', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', me: true },
-    { id: 2, name: 'Elena', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400' },
-    { id: 3, name: 'Marco', img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400' },
-    { id: 4, name: 'Anya', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400' },
-    { id: 5, name: 'Kenji', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400' }
+    { id: 1, name: 'Your Story', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', me: true, color: 'from-violet-500 to-indigo-500' },
+    { id: 2, name: 'Elena', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400', color: 'from-rose-500 to-rose-400' },
+    { id: 3, name: 'Marco', img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400', color: 'from-blue-500 to-cyan-500' },
+    { id: 4, name: 'Anya', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400', color: 'from-emerald-500 to-teal-500' },
+    { id: 5, name: 'Kenji', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400', color: 'from-amber-500 to-orange-500' }
   ];
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-8 no-scrollbar">
+    <div className="flex gap-6 overflow-x-auto pb-10 no-scrollbar">
       {stories.map((s) => (
         <motion.div
           key={s.id}
-          whileHover={{ y: -5, scale: 1.02 }}
-          className="relative min-w-[120px] h-48 rounded-[32px] overflow-hidden cursor-pointer shadow-soft border-4 border-white"
+          whileHover={{ y: -8, scale: 1.05 }}
+          className="relative min-w-[140px] h-56 rounded-[36px] overflow-hidden cursor-pointer shadow-xl group"
         >
-          <img src={s.img} className="w-full h-full object-cover" alt={s.name} />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
-          <div className="absolute top-3 left-3 w-10 h-10 rounded-2xl border-2 border-white overflow-hidden shadow-lg">
-            <img src={s.img} className="w-full h-full object-cover" />
+          <img src={s.img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={s.name} />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/10 to-transparent"></div>
+          <div className={`absolute top-4 left-4 w-12 h-12 rounded-2xl border-2 border-white overflow-hidden p-0.5 bg-gradient-to-tr ${s.color} shadow-2xl`}>
+            <div className="w-full h-full rounded-[14px] overflow-hidden border-2 border-white/50 bg-white">
+              <img src={s.img} className="w-full h-full object-cover" />
+            </div>
           </div>
-          <span className="absolute bottom-4 left-4 text-xs font-black text-white truncate w-[90px] uppercase tracking-tighter">{s.name}</span>
+          <span className="absolute bottom-5 left-5 text-[11px] font-black text-white truncate w-[100px] uppercase tracking-wider">{s.name}</span>
           {s.me && (
-            <div className="absolute top-10 left-10 w-6 h-6 bg-[#FFD700] rounded-lg flex items-center justify-center border-2 border-white shadow-xl">
-              <Plus size={14} className="text-slate-900" />
+            <div className="absolute top-12 left-12 w-6 h-6 bg-indigo-500 rounded-lg flex items-center justify-center border-2 border-white shadow-xl">
+              <Plus size={14} className="text-white" />
             </div>
           )}
         </motion.div>
@@ -149,43 +159,42 @@ const PostContent = ({ author, time, content, image, likes, comments }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.98 }}
     animate={{ opacity: 1, scale: 1 }}
-    className="shine-card p-6 mb-8 hover-lift"
+    className="shine-card p-10 mb-10 group"
   >
-    <div className="flex items-center justify-between mb-6">
-      <div className="flex items-center gap-4">
-        <div className="p-0.5 rounded-2xl bg-gradient-to-br from-[#FFD700] to-orange-400">
-          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author}`} alt={author} className="w-12 h-12 rounded-[14px] bg-white" />
+    <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center gap-5">
+        <div className="p-0.5 rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-500 to-rose-500 shadow-xl">
+          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${author}`} alt={author} className="w-14 h-14 rounded-[14px] bg-white ring-2 ring-white" />
         </div>
         <div>
-          <h4 className="font-extrabold text-sm text-slate-900">{author}</h4>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{time}</p>
+          <h4 className="font-black text-[15px] text-slate-900 tracking-tight">{author}</h4>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{time}</p>
         </div>
       </div>
-      <button className="text-slate-300 hover:text-amber-500 transition-colors"><PlusSquare size={22} /></button>
+      <button className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 mb-auto hover:bg-indigo-50 hover:text-indigo-500 transition-all">
+        <Plus size={20} />
+      </button>
     </div>
 
-    <p className="text-[15px] text-slate-700 mb-6 leading-relaxed font-medium">{content}</p>
+    <p className="text-[16px] text-slate-600 mb-8 leading-relaxed font-semibold italic">&quot;{content}&quot;</p>
 
     {image && (
-      <div className="rounded-[24px] overflow-hidden mb-6 shadow-2xl ring-4 ring-slate-50">
-        <img src={image} alt="Post media" className="w-full object-cover max-h-[500px]" />
+      <div className="rounded-[32px] overflow-hidden mb-8 shadow-2xl ring-8 ring-slate-100/30">
+        <img src={image} alt="Post media" className="w-full object-cover max-h-[600px] transition-transform duration-700 hover:scale-105" />
       </div>
     )}
 
-    <div className="flex items-center gap-4 pt-6 mt-2 border-t border-slate-100">
-      <button className="group flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-50 text-slate-500 hover:bg-rose-50 hover:text-rose-500 transition-all font-bold text-xs ring-1 ring-inset ring-slate-200 hover:ring-rose-200">
-        <Heart size={18} className="group-hover:fill-rose-500 transition-all" />
+    <div className="flex items-center gap-5 pt-8 mt-2 border-t border-slate-50">
+      <button className="group flex items-center gap-3 px-6 py-3 rounded-2xl bg-rose-50/50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all font-black text-[11px] uppercase tracking-widest">
+        <Heart size={20} className="group-hover:fill-white transition-all" />
         {likes}
       </button>
-      <button className="group flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-50 text-slate-500 hover:bg-blue-50 hover:text-blue-500 transition-all font-bold text-xs ring-1 ring-inset ring-slate-200 hover:ring-blue-200">
-        <MessageSquare size={18} />
+      <button className="group flex items-center gap-3 px-6 py-3 rounded-2xl bg-indigo-50/50 text-indigo-500 hover:bg-indigo-500 hover:text-white transition-all font-black text-[11px] uppercase tracking-widest">
+        <MessageSquare size={20} className="group-hover:fill-white transition-all" />
         {comments}
       </button>
-      <button className="ml-auto bg-gradient-to-r from-emerald-50 to-emerald-100/50 text-emerald-600 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest ring-1 ring-emerald-200/50 hover:scale-105 active:scale-95 transition-all">
+      <button className="ml-auto btn-shine-multi !py-3 !px-6 !rounded-2xl">
         Support Creator $5
-      </button>
-      <button className="text-slate-300 hover:text-slate-600 transition-colors">
-        <Share2 size={20} />
       </button>
     </div>
   </motion.div>
@@ -282,9 +291,9 @@ const CreatePost = ({ addPost, user }) => {
         <button
           onClick={handlePost}
           disabled={!text && !imageFile}
-          className="btn-shine px-12"
+          className="btn-shine-multi !px-16 !py-4 shadow-indigo-100"
         >
-          Publish <PlusSquare size={18} />
+          <span className="text-[12px]">Broadcast</span> <PlusSquare size={18} />
         </button>
       </div>
     </div>
@@ -337,53 +346,63 @@ const Chat = ({ user }) => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] shine-card overflow-hidden border-none shadow-2xl bg-white/70 backdrop-blur-3xl ring-8 ring-slate-100/30">
-      <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-500 shadow-sm">
-            <ShieldCheck size={28} />
+    <div className="flex flex-col h-[650px] shine-card overflow-hidden border-none shadow-3xl bg-white/70 backdrop-blur-3xl ring-12 ring-slate-100/30">
+      <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-white/50">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 rounded-[20px] bg-indigo-50 flex items-center justify-center text-indigo-500 shadow-xl shadow-indigo-500/10">
+            <ShieldCheck size={32} />
           </div>
           <div>
-            <h3 className="text-[13px] font-black text-slate-900 uppercase tracking-tight">Cloud Secure Chat</h3>
-            <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest flex items-center gap-1.5 mt-0.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span> Encrypted Stream Active
+            <h3 className="text-[14px] font-black text-slate-900 uppercase tracking-tight">Secure Nexus Stream</h3>
+            <p className="text-[10px] text-emerald-500 font-black uppercase tracking-[0.2em] flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></span> E2E Encryption Active
             </p>
           </div>
         </div>
-        <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-400 transition-colors">
-          <Settings size={20} />
+        <button className="p-3 rounded-2xl hover:bg-slate-50 text-slate-400 transition-all">
+          <Settings size={22} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar bg-gradient-to-b from-transparent to-slate-50/20">
-        <div className="flex justify-center">
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] bg-white text-slate-400 px-4 py-1.5 rounded-full border border-slate-100 shadow-sm">Global Exchange</span>
+      <div className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar bg-gradient-to-b from-transparent to-indigo-50/10">
+        <div className="flex justify-center mb-4">
+          <span className="text-[9px] font-black uppercase tracking-[0.3em] bg-white/80 backdrop-blur-md text-slate-400 px-6 py-2 rounded-full border border-slate-100 shadow-sm">Global Exchange Protocol</span>
         </div>
 
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.self ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] p-4 rounded-3xl text-[13px] font-medium shadow-soft border border-white ${msg.self
-              ? 'bg-gradient-to-br from-[#FFD700] to-[#FFB800] text-slate-900 rounded-br-none'
-              : 'bg-white text-slate-600 rounded-bl-none'}`}>
-              {!msg.self && <p className="text-[10px] font-black mb-1.5 text-indigo-500 uppercase tracking-widest">{msg.from}</p>}
-              <p className="leading-relaxed">{msg.text}</p>
-              <p className={`text-[9px] mt-2 font-bold uppercase tracking-tighter opacity-60`}>{msg.time}</p>
+            <div className={`max-w-[75%] p-6 rounded-[28px] text-[14px] font-medium shadow-xl border border-white/50 ${msg.self
+              ? 'bg-gradient-to-br from-[#8B5CF6] to-[#3B82F6] text-white rounded-br-none shadow-indigo-500/20'
+              : 'bg-white text-slate-600 rounded-bl-none shadow-sm'}`}>
+              {!msg.self && (
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-lg bg-indigo-50 flex items-center justify-center">
+                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${msg.from}`} className="w-4 h-4" />
+                  </div>
+                  <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{msg.from}</p>
+                </div>
+              )}
+              <p className="leading-relaxed italic">{msg.text}</p>
+              <div className={`flex items-center gap-2 mt-3 opacity-40 ${msg.self ? 'justify-end' : 'justify-start'}`}>
+                <p className="text-[9px] font-black uppercase tracking-widest">{msg.time}</p>
+                {msg.self && <ShieldCheck size={10} />}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSendMessage} className="p-6 bg-white/50 border-t border-slate-50">
+      <form onSubmit={handleSendMessage} className="p-8 bg-white border-t border-slate-50">
         <div className="relative group">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Transmit secure message..."
-            className="w-full bg-slate-50 border border-slate-100 rounded-3xl py-4 px-6 pr-14 focus:outline-none focus:ring-4 focus:ring-[#FFD700]/10 focus:bg-white focus:border-[#FFD700]/50 transition-all text-[13px] font-semibold"
+            placeholder="Transmit secure signal..."
+            className="w-full bg-slate-50 border border-slate-100 rounded-3xl py-5 px-8 pr-16 focus:outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white focus:border-indigo-500/20 transition-all text-[14px] font-black placeholder:text-slate-300"
           />
-          <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900 p-2.5 rounded-2xl text-white shadow-xl hover:scale-110 active:scale-95 transition-all">
-            <MessageSquare size={18} />
+          <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900 p-3 rounded-2xl text-white shadow-2xl hover:scale-105 active:scale-95 transition-all">
+            <MessageSquare size={20} />
           </button>
         </div>
       </form>
@@ -392,29 +411,35 @@ const Chat = ({ user }) => {
 };
 
 const Groups = () => (
-  <div className="space-y-6">
+  <div className="space-y-10">
     <div className="flex items-center justify-between">
-      <h2 className="text-2xl font-bold">Cultural Communities</h2>
-      <button className="btn-primary py-2 px-4 text-xs">+ Create Group</button>
+      <div>
+        <h2 className="text-3xl font-black tracking-tighter text-slate-900 uppercase">Communities</h2>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Global Interest Hubs</p>
+      </div>
+      <button className="btn-shine-multi !p-4 !rounded-2xl shadow-xl shadow-indigo-500/10">
+        <Plus size={18} /> <span className="text-[10px]">Create Circle</span>
+      </button>
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
       {[
-        { name: 'Gourmet World', members: '12.4k', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600', color: 'bg-orange-500' },
-        { name: 'Travel Pioneers', members: '8.2k', img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600', color: 'bg-blue-500' },
-        { name: 'EcoConnect', members: '5.1k', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600', color: 'bg-green-500' },
-        { name: 'Tech Global', members: '15.9k', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600', color: 'bg-purple-500' }
+        { name: 'Gourmet World', members: '12.4k', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600', color: 'from-orange-500 to-rose-500' },
+        { name: 'Travel Pioneers', members: '8.2k', img: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600', color: 'from-blue-500 to-indigo-500' },
+        { name: 'EcoConnect', members: '5.1k', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600', color: 'from-emerald-500 to-teal-500' },
+        { name: 'Tech Global', members: '15.9k', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600', color: 'from-indigo-500 to-violet-600' }
       ].map((group, i) => (
         <motion.div
           key={i}
-          whileHover={{ scale: 1.02 }}
-          className="glass-morphism overflow-hidden relative group cursor-pointer"
+          whileHover={{ y: -8 }}
+          className="shine-card overflow-hidden relative group cursor-pointer border-none"
         >
-          <div className="h-32 w-full overflow-hidden">
-            <img src={group.img} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" />
+          <div className="h-40 w-full overflow-hidden">
+            <img src={group.img} className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" />
+            <div className={`absolute inset-0 bg-gradient-to-br ${group.color} mix-blend-multiply opacity-40 group-hover:opacity-20 transition-opacity`}></div>
           </div>
-          <div className="p-4 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 to-transparent">
-            <h4 className="font-bold text-lg">{group.name}</h4>
-            <p className="text-xs text-slate-300">{group.members} members</p>
+          <div className="p-6 absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent">
+            <h4 className="font-black text-xl text-white tracking-tight">{group.name}</h4>
+            <p className="text-[10px] font-black text-white/70 uppercase tracking-widest">{group.members} Elite members</p>
           </div>
         </motion.div>
       ))}
@@ -423,108 +448,134 @@ const Groups = () => (
 );
 
 const Profile = () => (
-  <div className="space-y-8">
-    <div className="glass-morphism p-8 text-center relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-[#2F4F7F] to-[#FF9900] opacity-30"></div>
-      <div className="relative z-10">
-        <div className="relative inline-block mb-4">
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" className="w-24 h-24 rounded-full border-4 border-slate-900 mx-auto" alt="Avatar" />
-          <div className="absolute bottom-0 right-0 bg-[#3CB371] p-1.5 rounded-full border-2 border-slate-900">
-            <PlusSquare size={14} className="text-white" />
+  <div className="space-y-10">
+    <div className="shine-card p-12 text-center relative overflow-hidden border-none shadow-2xl">
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-violet-500 via-indigo-500 to-rose-500 opacity-20"></div>
+      <div className="relative z-10 mt-6">
+        <div className="relative inline-block mb-6">
+          <div className="p-1 rounded-full bg-gradient-to-tr from-violet-500 via-indigo-500 to-rose-500 shadow-2xl">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" className="w-32 h-32 rounded-full border-4 border-white mx-auto object-cover" alt="Avatar" />
+          </div>
+          <div className="absolute bottom-2 right-2 bg-emerald-500 p-2 rounded-2xl border-4 border-white shadow-xl">
+            <ShieldCheck size={20} className="text-white" />
           </div>
         </div>
-        <h2 className="text-2xl font-bold">Felix Gipjazes</h2>
-        <p className="text-[#FF9900] font-bold text-sm mb-4">PRO MEMBER</p>
-        <p className="text-sm text-slate-400 max-w-sm mx-auto mb-6">Building the future of global connection, one pixel at a time. Tech enthusiast & world traveler. 🌍✨</p>
-        <div className="flex justify-center gap-8 border-t border-slate-700/50 pt-6">
-          <div><p className="font-bold">128</p><p className="text-[10px] text-slate-500 uppercase">Posts</p></div>
-          <div><p className="font-bold">4.2k</p><p className="text-[10px] text-slate-500 uppercase">Followers</p></div>
-          <div><p className="font-bold">856</p><p className="text-[10px] text-slate-500 uppercase">Following</p></div>
+        <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Felix Gipjazes</h2>
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <span className="text-[10px] font-black text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 uppercase tracking-[0.2em]">Elite Pioneer</span>
+        </div>
+        <p className="text-slate-500 font-medium text-[15px] max-w-sm mx-auto my-8 leading-relaxed">Building the future of global connection, one spectrum at a time. Tech enthusiast & world traveler. 🌌🚀</p>
+        <div className="flex justify-center gap-12 pt-8 border-t border-slate-100">
+          <div><p className="font-black text-xl text-slate-900">128</p><p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">Logs</p></div>
+          <div><p className="font-black text-xl text-slate-900">4.2k</p><p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">Network</p></div>
+          <div><p className="font-black text-xl text-slate-900">856</p><p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mt-1">Insights</p></div>
         </div>
       </div>
     </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="glass-morphism p-5">
-        <h3 className="text-sm font-bold mb-4 flex items-center gap-2"><Settings size={18} /> Account Settings</h3>
-        <div className="space-y-4">
-          {['Edit Profile', 'Privacy & Security', 'Language: English', 'Notifications'].map(item => (
-            <button key={item} className="w-full text-left text-sm text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-lg transition-colors border-b border-slate-700/30">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="shine-card p-8 bg-white/50 border-none shadow-xl">
+        <h3 className="text-[13px] font-black text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500">
+            <Settings size={18} />
+          </div>
+          Control Center
+        </h3>
+        <div className="space-y-3">
+          {['Identity Manifest', 'Cryptographic Privacy', 'Interstellar Nodes', 'Frequency Tones'].map(item => (
+            <button key={item} className="w-full text-left text-[13px] font-bold text-slate-500 hover:text-indigo-500 p-4 hover:bg-indigo-50/50 rounded-2xl transition-all border-b border-slate-50 last:border-0">
               {item}
             </button>
           ))}
         </div>
       </div>
-      <div className="glass-morphism p-5">
-        <h3 className="text-sm font-bold mb-4 flex items-center gap-2 text-[#FF9900]">✨ Premium Benefits</h3>
-        <ul className="text-xs text-slate-400 space-y-3">
-          <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-[#FF9900] rounded-full"></div> Verified GOLD badge</li>
-          <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-[#FF9900] rounded-full"></div> 10% more commission on tips</li>
-          <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-[#FF9900] rounded-full"></div> Early access to Gipjazes Labs</li>
+      <div className="shine-card p-8 bg-gradient-to-br from-slate-900 to-indigo-950 border-none shadow-2xl">
+        <h3 className="text-[13px] font-black text-white uppercase tracking-widest mb-6 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-[#FFD700]">
+            <PlusSquare size={18} />
+          </div>
+          Elite Tiers
+        </h3>
+        <ul className="text-[12px] text-white/60 space-y-4">
+          <li className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-2xl border border-white/5 font-bold"><div className="w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_8px_#4ade80]"></div> Multi-Node Stream Access</li>
+          <li className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-2xl border border-white/5 font-bold"><div className="w-2 h-2 bg-rose-400 rounded-full shadow-[0_0_8px_#fb7185]"></div> Infinite Storage Matrix</li>
+          <li className="flex items-center gap-3 px-4 py-3 bg-white/5 rounded-2xl border border-white/5 font-bold"><div className="w-2 h-2 bg-blue-400 rounded-full shadow-[0_0_8px_#60a5fa]"></div> Priority Global Traffic</li>
         </ul>
-        <button className="w-full mt-6 bg-slate-800 text-white py-2 rounded-lg text-xs font-bold hover:bg-[#FF9900] transition-colors">Manage Subscription</button>
+        <button className="w-full mt-8 btn-shine-multi !p-4 !rounded-2xl">Elevate Status</button>
       </div>
     </div>
   </div>
 );
 
 const Analytics = () => (
-  <div className="space-y-8 pb-10">
-    <div className="grid grid-cols-3 gap-4">
+  <div className="space-y-10 pb-20">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[
-        { label: 'Total Earnings', value: '$24,850', color: 'text-[#FF9900]' },
-        { label: 'Active Sessions', value: '102.4k', color: 'text-[#3CB371]' },
-        { label: 'Conversion', value: '8.4%', color: 'text-blue-400' }
+        { label: 'Network Reach', value: '$24,850', color: 'text-violet-500', bg: 'bg-violet-50' },
+        { label: 'Active Streams', value: '102.4k', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+        { label: 'Growth Ratio', value: '8.4%', color: 'text-rose-500', bg: 'bg-rose-50' }
       ].map((stat, i) => (
-        <div key={i} className="glass-morphism p-4">
-          <p className="text-[9px] text-slate-500 uppercase font-bold mb-1">{stat.label}</p>
-          <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+        <div key={i} className="shine-card p-8 border-none shadow-xl">
+          <p className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em] mb-3">{stat.label}</p>
+          <div className="flex items-end justify-between">
+            <p className={`text-2xl font-black ${stat.color} tracking-tight`}>{stat.value}</p>
+            <div className={`w-8 h-8 ${stat.bg} rounded-xl flex items-center justify-center`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${stat.color.replace('text', 'bg')} animate-pulse`}></div>
+            </div>
+          </div>
         </div>
       ))}
     </div>
 
-    <div className="glass-morphism p-6">
-      <div className="flex items-center justify-between mb-8">
-        <h3 className="text-lg font-bold">Growth Map 🌐</h3>
-        <select className="bg-slate-800 text-xs border border-slate-700 px-3 py-1 rounded-md outline-none">
-          <option>Last 30 Days</option>
-          <option>Last 6 Months</option>
+    <div className="shine-card p-10 border-none shadow-2xl bg-white/70 backdrop-blur-3xl">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Spectrum Map</h3>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Cross-Continental Growth</p>
+        </div>
+        <select className="bg-slate-50 text-[10px] font-black uppercase tracking-widest border border-slate-100 px-4 py-2 rounded-xl outline-none text-slate-600 cursor-pointer hover:bg-white transition-all">
+          <option>Flux: 30D</option>
+          <option>Flux: 6M</option>
         </select>
       </div>
-      <div className="h-48 w-full bg-slate-800/20 rounded-xl relative flex items-end justify-between p-4 px-8 overflow-hidden">
+      <div className="h-56 w-full bg-slate-50/50 rounded-[32px] relative flex items-end justify-between p-8 px-12 overflow-hidden border border-white">
         {/* Mock Chart */}
-        <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-indigo-500/5 to-transparent"></div>
         {[40, 60, 45, 90, 65, 80, 55, 100, 85].map((h, i) => (
           <motion.div
             key={i}
             initial={{ height: 0 }}
             animate={{ height: `${h}%` }}
-            transition={{ delay: i * 0.1 }}
-            className="w-4 bg-gradient-to-t from-[#FF9900] to-orange-400 rounded-t-sm"
+            transition={{ delay: i * 0.1, duration: 1, ease: "easeOut" }}
+            className={`w-6 rounded-t-xl bg-gradient-to-t ${i % 4 === 0 ? 'from-violet-500 to-indigo-400' :
+              i % 4 === 1 ? 'from-indigo-500 to-blue-400' :
+                i % 4 === 2 ? 'from-emerald-500 to-teal-400' :
+                  'from-rose-500 to-pink-400'
+              } shadow-lg`}
           ></motion.div>
         ))}
       </div>
     </div>
 
-    <div className="glass-morphism overflow-hidden">
+    <div className="shine-card overflow-hidden border-none shadow-xl">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-800/80 text-[10px] text-slate-500 uppercase font-bold">
+        <thead className="bg-slate-50 text-[10px] text-slate-400 uppercase font-black tracking-widest">
           <tr>
-            <th className="p-4">Region</th>
-            <th className="p-4">Revenue</th>
-            <th className="p-4">Growth</th>
+            <th className="p-6">Interstellar Node</th>
+            <th className="p-6">Frequency</th>
+            <th className="p-6">Signal Strength</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-white/50">
           {[
-            { region: 'North America', rev: '$12,400', grow: '+15.2%' },
-            { region: 'Europe', rev: '$8,200', grow: '+9.4%' },
-            { region: 'Asia Pacific', rev: '$4,250', grow: '+22.1%' }
+            { region: 'Northern Spectrum', rev: 'Link Active', grow: '+15.2%', color: 'text-violet-500' },
+            { region: 'European Matrix', rev: 'Link High', grow: '+9.4%', color: 'text-blue-500' },
+            { region: 'Asian Gateway', rev: 'Link Elite', grow: '+22.1%', color: 'text-emerald-500' }
           ].map((row, i) => (
-            <tr key={i} className="border-t border-slate-700/30 hover:bg-slate-800/30 transition-colors">
-              <td className="p-4 font-medium">{row.region}</td>
-              <td className="p-4 text-slate-300">{row.rev}</td>
-              <td className="p-4 text-[#3CB371] font-bold">{row.grow}</td>
+            <tr key={i} className="border-t border-slate-50 hover:bg-indigo-50/30 transition-all group">
+              <td className="p-6 font-black text-slate-900">{row.region}</td>
+              <td className="p-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">{row.rev}</td>
+              <td className={`p-6 ${row.color} font-black tracking-tighter text-lg`}>{row.grow}</td>
             </tr>
           ))}
         </tbody>
@@ -534,34 +585,37 @@ const Analytics = () => (
 );
 
 const Marketplace = ({ products, onPurchase }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
-    {products.map((item) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pb-32">
+    {products.map((item, i) => (
       <motion.div
         key={item._id}
-        whileHover={{ y: -10 }}
-        className="shine-card overflow-hidden group border-none shadow-soft hover:shadow-2xl transition-all duration-500"
+        whileHover={{ y: -12 }}
+        className="shine-card overflow-hidden group border-none shadow-xl hover:shadow-2xl transition-all duration-500"
       >
-        <div className="h-56 overflow-hidden relative">
+        <div className="h-64 overflow-hidden relative">
           <img src={item.image || item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-emerald-600 shadow-xl border border-emerald-50">
-            {item.stock > 0 ? 'Verified Item' : 'Out of Stock'}
+          <div className="absolute top-5 right-5 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-[#8B5CF6] shadow-2xl border border-indigo-50">
+            {item.stock > 0 ? 'Verified Node' : 'Depleted'}
           </div>
+          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
         </div>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-black text-lg text-slate-900 tracking-tight">{item.name}</h4>
-            <span className="text-xl font-black text-[#FFB800]">{item.price}</span>
+        <div className="p-8">
+          <div className="flex justify-between items-start mb-3">
+            <h4 className="font-black text-xl text-slate-900 tracking-tight leading-tight">{item.name}</h4>
+            <span className={`text-2xl font-black ${i % 2 === 0 ? 'text-[#8B5CF6]' : 'text-rose-500'} tracking-tighter`}>{item.price}</span>
           </div>
-          <div className="flex items-center gap-2 mb-6">
-            <Globe size={14} className="text-slate-400" />
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global Link: {item.origin}</p>
+          <div className="flex items-center gap-2 mb-8">
+            <div className="w-5 h-5 rounded-lg bg-slate-50 flex items-center justify-center">
+              <Globe size={12} className="text-slate-400" />
+            </div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Gateway: {item.origin}</p>
           </div>
           <button
             onClick={() => onPurchase(item)}
             disabled={item.stock === 0}
-            className="w-full btn-shine py-4 text-xs justify-center disabled:opacity-30"
+            className="w-full btn-shine-multi !py-4 shadow-indigo-200 disabled:opacity-30"
           >
-            {item.stock > 0 ? 'Place Order' : 'Sold Out'}
+            {item.stock > 0 ? 'Acquire Resource' : 'Out of Sync'}
           </button>
         </div>
       </motion.div>
@@ -575,49 +629,53 @@ const MerchantCenter = ({ products, orders }) => {
   const totalSales = orders.reduce((acc, curr) => acc + parseFloat(curr.totalPrice.replace('$', '') || 0), 0);
 
   return (
-    <div className="space-y-10">
-      <div className="shine-card p-10 bg-gradient-to-r from-blue-50/50 to-white">
-        <div className="flex justify-between items-center mb-10">
+    <div className="space-y-12 pb-20">
+      <div className="shine-card p-12 bg-gradient-to-br from-indigo-50/50 via-white to-rose-50/20 border-none shadow-2xl">
+        <div className="flex justify-between items-center mb-12">
           <div>
-            <h2 className="text-4xl font-black tracking-tighter text-slate-900">Merchant <span className="gradient-text-gold italic">Hub</span></h2>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Global Inventory Architecture</p>
+            <h2 className="text-4xl font-black tracking-tighter text-slate-900 uppercase">Architecture <span className="gradient-text-multi italic">Hub</span></h2>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mt-2">Personal Inventory Node</p>
           </div>
-          <button className="btn-shine px-8">+ New Product</button>
+          <button className="btn-shine-multi shadow-indigo-500/10 !px-10">
+            <Plus size={20} /> <span className="text-[12px]">Manifest New</span>
+          </button>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { label: 'Pending Orders', value: pendingOrders, color: 'text-[#FFB800]', bg: 'bg-yellow-50' },
-            { label: 'Total Revenue', value: `$${totalSales.toLocaleString()}`, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-            { label: 'Active Streams', value: orders.filter(o => o.status === 'Processing').length, color: 'text-blue-500', bg: 'bg-blue-50' },
-            { label: 'Trust Score', value: '4.9/5', color: 'text-indigo-500', bg: 'bg-indigo-50' }
+            { label: 'Awaiting Sync', value: pendingOrders, color: 'text-rose-500', bg: 'bg-rose-50' },
+            { label: 'Total Flux', value: `$${totalSales.toLocaleString()}`, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+            { label: 'Active Process', value: orders.filter(o => o.status === 'Processing').length, color: 'text-blue-500', bg: 'bg-blue-50' },
+            { label: 'Nexus Score', value: '4.9/5', color: 'text-[#8B5CF6]', bg: 'bg-indigo-50' }
           ].map((s, i) => (
-            <div key={i} className={`${s.bg} p-6 rounded-3xl border border-white shadow-soft`}>
-              <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2">{s.label}</p>
-              <p className={`text-2xl font-black ${s.color} tracking-tighter`}>{s.value}</p>
+            <div key={i} className={`${s.bg} p-8 rounded-[32px] border border-white shadow-soft transition-all hover:scale-105`}>
+              <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-3">{s.label}</p>
+              <p className={`text-3xl font-black ${s.color} tracking-tighter`}>{s.value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="shine-card overflow-hidden border-none shadow-soft">
-          <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-            <h3 className="text-xs font-black uppercase tracking-widest">Active Listings</h3>
-            <button className="text-[10px] text-[#FFB800] font-black uppercase tracking-widest hover:underline">Manage All</button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="shine-card overflow-hidden border-none shadow-xl">
+          <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900">Current Artifacts</h3>
+            <button className="text-[10px] text-indigo-500 font-black uppercase tracking-widest hover:underline">Reconfigure All</button>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-8 space-y-5">
             {products.map((item) => (
-              <div key={item._id} className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-soft border border-slate-50 hover:border-[#FFD700] transition-all">
-                <div className="flex items-center gap-4">
-                  <img src={item.image || item.img} className="w-12 h-12 rounded-xl bg-slate-100 object-cover shadow-sm" />
+              <div key={item._id} className="flex items-center justify-between p-5 bg-white rounded-3xl shadow-sm border border-slate-50 hover:border-indigo-200 transition-all group">
+                <div className="flex items-center gap-5">
+                  <div className="p-0.5 rounded-2xl bg-gradient-to-tr from-indigo-500 to-violet-500 shadow-lg group-hover:scale-110 transition-transform">
+                    <img src={item.image || item.img} className="w-14 h-14 rounded-2xl bg-white object-cover" />
+                  </div>
                   <div>
-                    <p className="text-[13px] font-black text-slate-900">{item.name}</p>
-                    <p className="text-[11px] font-bold text-[#FFB800]">{item.price}</p>
+                    <p className="text-[14px] font-black text-slate-900 leading-tight">{item.name}</p>
+                    <p className="text-[11px] font-black text-indigo-400 mt-1 uppercase tracking-widest">{item.price}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`text-[10px] font-black uppercase tracking-widest ${item.stock === 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
-                    {item.stock} Units
+                  <p className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${item.stock === 0 ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                    {item.stock} Stocked
                   </p>
                 </div>
               </div>
@@ -625,27 +683,27 @@ const MerchantCenter = ({ products, orders }) => {
           </div>
         </div>
 
-        <div className="shine-card overflow-hidden border-none shadow-soft">
-          <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-            <h3 className="text-xs font-black uppercase tracking-widest">Order Manifest</h3>
-            <button className="text-[10px] text-[#FFB800] font-black uppercase tracking-widest hover:underline">Export Data</button>
+        <div className="shine-card overflow-hidden border-none shadow-xl">
+          <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900">Recent Stream</h3>
+            <button className="text-[10px] text-rose-500 font-black uppercase tracking-widest hover:underline">Full Analytics</button>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-8 space-y-5">
             {orders.length === 0 ? (
               <div className="text-center py-20 opacity-30">
-                <ShoppingBag size={48} className="mx-auto mb-4 text-slate-300" />
-                <p className="text-xs font-black uppercase tracking-widest">No Active Orders</p>
+                <Globe size={64} className="mx-auto mb-6 text-slate-200 animate-pulse" />
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Awaiting Signal</p>
               </div>
             ) : (
               orders.slice(0, 5).map((order) => (
-                <div key={order._id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-white">
+                <div key={order._id} className="flex items-center justify-between p-5 bg-slate-50/50 rounded-3xl border border-white hover:bg-white transition-all">
                   <div>
-                    <p className="text-[11px] font-black text-slate-900 leading-none mb-1 uppercase tracking-tight">Order #{order._id.slice(-6)}</p>
-                    <p className="text-[10px] text-slate-500 font-medium">{order.product?.name || 'Global Resource'}</p>
+                    <p className="text-[12px] font-black text-slate-900 leading-none mb-1 uppercase tracking-tight">Signal #{order._id.slice(-6)}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{order.product?.name || 'Protocol Node'}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[12px] font-black text-emerald-600 mb-1">{order.totalPrice}</p>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{order.status || 'Verified'}</p>
+                    <p className="text-[14px] font-black text-indigo-500 mb-1 leading-none">{order.totalPrice}</p>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Verified</p>
                   </div>
                 </div>
               ))
@@ -670,44 +728,46 @@ const PurchaseModal = ({ product, onClose, onConfirm }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-xl">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="shine-card p-10 max-w-[440px] w-full border-none shadow-2xl ring-8 ring-white/50"
+        className="shine-card p-12 max-w-[480px] w-full border-none shadow-3xl ring-12 ring-white/20 bg-white"
       >
-        <h3 className="text-2xl font-black mb-2 tracking-tight">Checkout</h3>
-        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-8">Confirming Global Acquisition</p>
+        <h3 className="text-3xl font-black mb-2 tracking-tighter text-slate-900 uppercase">Synchronize Acquisition</h3>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Confirming Neural Exchange</p>
 
-        <div className="flex justify-between items-center mb-8 p-6 bg-slate-50 rounded-3xl border border-white">
+        <div className="flex justify-between items-center mb-10 p-8 bg-slate-50 rounded-[32px] border border-white shadow-inner">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Resource</p>
-            <p className="text-sm font-black text-slate-900">{product.name}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Resource ID</p>
+            <p className="text-sm font-black text-slate-900 tracking-tight">{product.name}</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Total</p>
-            <p className="text-2xl font-black text-[#FFB800]">{product.price}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Protocol Fee</p>
+            <p className="text-3xl font-black text-indigo-500 tracking-tighter leading-none">{product.price}</p>
           </div>
         </div>
 
-        <div className="space-y-3 mb-10">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Delivery Destination</label>
+        <div className="space-y-4 mb-12">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+            <Globe size={14} className="text-indigo-400" /> Signal Destination
+          </label>
           <textarea
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Enter your international shipping address..."
-            className="w-full bg-slate-50 border border-slate-100 rounded-3xl py-4 px-5 focus:outline-none focus:ring-4 focus:ring-[#FFD700]/10 focus:bg-white focus:border-[#FFD700]/50 transition-all text-sm font-semibold h-32 resize-none"
+            placeholder="Specify point of origin/entry..."
+            className="w-full bg-slate-50 border border-slate-100 rounded-[28px] py-5 px-6 focus:outline-none focus:ring-8 focus:ring-indigo-500/5 focus:bg-white focus:border-indigo-500/20 transition-all text-sm font-black placeholder:text-slate-300 h-36 resize-none"
           />
         </div>
 
-        <div className="flex gap-4">
-          <button onClick={onClose} className="flex-1 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Abort</button>
+        <div className="flex gap-6">
+          <button onClick={onClose} className="flex-1 py-5 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-rose-500 transition-colors">Abort Stream</button>
           <button
             onClick={handleConfirm}
             disabled={!address || loading}
-            className="flex-1 btn-shine justify-center disabled:opacity-30"
+            className="flex-2 btn-shine-multi !px-12 !py-5 disabled:opacity-30"
           >
-            {loading ? 'Transmitting...' : 'Finalize Order'}
+            {loading ? 'Transmitting...' : <><ShieldCheck size={18} /> <span className="text-[12px]">Authorize Transfer</span></>}
           </button>
         </div>
       </motion.div>
@@ -717,51 +777,57 @@ const PurchaseModal = ({ product, onClose, onConfirm }) => {
 
 
 const RightPanel = () => (
-  <div className="fixed right-0 top-20 bottom-0 w-96 p-10 hidden xl:block overflow-y-auto no-scrollbar">
-    <div className="shine-card p-6 mb-8 border-none bg-gradient-to-br from-white to-amber-50/30">
-      <h3 className="text-xs font-black mb-6 flex items-center gap-3 text-emerald-600 uppercase tracking-widest">
-        <Users size={18} /> Rising Creators
+  <div className="fixed right-0 top-20 bottom-0 w-96 p-12 hidden xl:block overflow-y-auto no-scrollbar">
+    <div className="shine-card p-8 mb-10 border-none bg-gradient-to-br from-indigo-50/30 to-white shadow-xl">
+      <h3 className="text-[11px] font-black mb-8 flex items-center gap-3 text-indigo-500 uppercase tracking-[0.2em]">
+        <Users size={20} /> Pulse Network
       </h3>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         {[
-          { name: 'Elena Rodriguez', meta: 'Artist • Spain', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena' },
-          { name: 'Kenji Sato', meta: 'Dev • Japan', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Kenji' }
+          { name: 'Elena Rodriguez', meta: 'Artist • Madrid', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena', color: 'bg-rose-500' },
+          { name: 'Kenji Sato', meta: 'Dev • Tokyo', img: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Kenji', color: 'bg-indigo-500' }
         ].map((person, i) => (
-          <div key={i} className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-transform">
-            <div className="flex items-center gap-3">
-              <img src={person.img} className="w-10 h-10 rounded-2xl bg-white shadow-soft p-0.5 border border-slate-100" />
+          <div key={i} className="flex items-center justify-between group cursor-pointer hover:translate-x-1 transition-all">
+            <div className="flex items-center gap-4">
+              <div className={`p-0.5 rounded-2xl bg-gradient-to-tr ${i === 0 ? 'from-rose-400 to-indigo-400' : 'from-indigo-400 to-emerald-400'} shadow-lg`}>
+                <img src={person.img} className="w-12 h-12 rounded-[14px] bg-white border-2 border-white" />
+              </div>
               <div>
-                <h4 className="text-[11px] font-black text-slate-900">{person.name}</h4>
-                <p className="text-[9px] text-slate-400 font-bold uppercase">{person.meta}</p>
+                <h4 className="text-[13px] font-black text-slate-900 leading-tight">{person.name}</h4>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{person.meta}</p>
               </div>
             </div>
-            <button className="text-[10px] font-black text-[#FFB800] uppercase tracking-tighter hover:underline">Connect</button>
+            <button className={`w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-all`}>
+              <Plus size={16} />
+            </button>
           </div>
         ))}
       </div>
     </div>
 
-    <div className="shine-card p-6 border-none bg-gradient-to-br from-blue-50 to-indigo-50/30">
-      <div className="flex items-center gap-3 mb-4">
-        <ShoppingBag size={20} className="text-blue-500 shadow-xl" />
-        <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">Global Hub</h3>
+    <div className="shine-card p-10 border-none bg-gradient-to-br from-slate-900 to-indigo-950 shadow-2xl">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-indigo-400">
+          <ShoppingBag size={22} />
+        </div>
+        <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-white">Neural Hub</h3>
       </div>
-      <p className="text-[11px] text-slate-500 font-medium mb-6 leading-relaxed">Exchange crafts, stories, and connections in our community marketplace.</p>
-      <button className="w-full bg-slate-900 text-white py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-2xl">
-        Explore World
+      <p className="text-[13px] text-white/50 font-medium mb-8 leading-relaxed italic">&quot;Transmit resources and forge alliances across the spectrum.&quot;</p>
+      <button className="w-full btn-shine-multi !py-4 shadow-indigo-900">
+        Initiate Browse
       </button>
     </div>
 
-    <div className="shine-card p-6 mt-8 border-none bg-gradient-to-br from-[#FFD700]/10 to-transparent">
-      <h3 className="text-xs font-black mb-4 flex items-center gap-3 text-slate-900 uppercase tracking-widest">
-        💰 Network Stats
+    <div className="shine-card p-10 mt-10 border-none bg-indigo-50/20">
+      <h3 className="text-[10px] font-black mb-6 flex items-center gap-3 text-slate-400 uppercase tracking-[0.3em]">
+        Signal Strength
       </h3>
       <div className="flex justify-between items-end">
         <div>
-          <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">Total Impact</p>
-          <p className="text-3xl font-black text-slate-900 tracking-tighter">$8.4M</p>
+          <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Global Impact</p>
+          <p className="text-4xl font-black text-slate-900 tracking-tighter">$8.4M</p>
         </div>
-        <div className="text-[10px] text-emerald-500 font-black">+14.2%</div>
+        <div className="text-[12px] text-emerald-500 font-black px-3 py-1 bg-emerald-50 rounded-full border border-emerald-100">+14.2%</div>
       </div>
     </div>
   </div>
@@ -935,7 +1001,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-amber-100">
+    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-100">
       <Navbar setActiveTab={setActiveTab} />
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="pt-28 px-10 lg:ml-72 xl:mr-96 max-w-2xl mx-auto min-h-screen pb-24">
@@ -954,8 +1020,8 @@ function App() {
                 <div className="flex flex-col gap-0">
                   {feedPosts.length === 0 ? (
                     <div className="py-32 text-center opacity-40">
-                      <div className="w-16 h-16 border-4 border-slate-200 border-t-[#FFD700] rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
-                      <p className="text-xs font-black tracking-[0.2em] uppercase text-slate-500">Syncing Worldwide...</p>
+                      <div className="w-16 h-16 border-4 border-slate-200 border-t-[#8B5CF6] rounded-full animate-spin mx-auto mb-6 shadow-xl"></div>
+                      <p className="text-[10px] font-black tracking-[0.4em] uppercase text-slate-500">Syncing Spectrum...</p>
                     </div>
                   ) : (
                     feedPosts.map((post) => (
