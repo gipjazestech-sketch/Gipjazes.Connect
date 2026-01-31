@@ -68,11 +68,6 @@ io.on('connection', (socket) => {
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../web/dist')));
-    app.get('*', (req, res) => {
-        if (!req.url.startsWith('/api')) {
-            res.sendFile(path.resolve(__dirname, '../web', 'dist', 'index.html'));
-        }
-    });
 } else {
     app.get('/', (req, res) => {
         res.send('Gipjazes Connect API is running...');
@@ -96,6 +91,15 @@ mongoose.connect(MONGODB_URI)
         console.error('Could not connect to MongoDB. Switching to Demo Mode (In-Memory).');
         global.isDemoMode = true;
     });
+
+// Serve index.html for any remaining non-API routes in production
+if (process.env.NODE_ENV === 'production') {
+    app.get('/*', (req, res) => {
+        if (!req.url.startsWith('/api')) {
+            res.sendFile(path.resolve(__dirname, '../web', 'dist', 'index.html'));
+        }
+    });
+}
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
