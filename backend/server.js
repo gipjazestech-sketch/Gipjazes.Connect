@@ -37,8 +37,12 @@ app.get('/api/status', (req, res) => {
 // Create uploads folder if it doesn't exist
 const fs = require('fs');
 const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+try {
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    }
+} catch (err) {
+    console.warn('Warning: Could not create uploads directory. If on Vercel, this is expected for local storage.');
 }
 app.use('/uploads', express.static(uploadDir));
 
